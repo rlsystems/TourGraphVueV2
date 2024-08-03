@@ -1,0 +1,203 @@
+<script setup>
+import LoadingButton from "@/components/loading-button.vue";
+
+import SeasonModal from "./components/season-modal.vue";
+import SeasonWidget from "./components/season-widget.vue";
+import Multiselect from "vue-multiselect";
+
+import { computed, ref, onMounted, watch } from "vue";
+import { useForm } from "vee-validate";
+import * as yup from "yup";
+
+import { useRouter } from "vue-router";
+const router = useRouter();
+
+import { useItinerariesStore } from "@/stores/itinerariesStore";
+const itinerariesStore = useItinerariesStore();
+
+// refs
+const props = defineProps(["itineraryId"]);
+const updating = ref(false);
+const deleting = ref(false);
+const seasons = ref(itinerariesStore.itinerary?.seasons);
+const creatingSeason = ref(false);
+const showSeasonModal = ref(false);
+
+
+
+// initial values
+const initialValues = ref({
+  name: itinerariesStore.itinerary?.name || "",
+  wpId: itinerariesStore.itinerary?.wpId || "",
+  lengthInNights: itinerariesStore.itinerary?.lengthInNights || 1,
+  productId: itinerariesStore.itinerary?.productId || null,
+});
+
+// schema
+const schema = yup.object({
+  name: yup.string().required(),
+  lengthInNights: yup.number().required().min(1, "Must be greater than 0"),
+});
+
+// veevalidate form object
+const { handleSubmit, defineField, errors, meta, resetForm } = useForm({
+  initialValues: initialValues,
+  validationSchema: schema,
+});
+
+// fields
+const [name, nameAttrs] = defineField("name");
+const [lengthInNights, lengthInNightsAttrs] = defineField("lengthInNights");
+const [wpId, wpIdAttrs] = defineField("wpId");
+
+const canProceed = computed(() => {
+  return meta.value.dirty && meta.value.valid;
+});
+
+// handle submit
+const submitUpdate = handleSubmit(async (values) => {
+  let updatedItinerary = { ...itinerariesStore.itinerary, ...values };
+  updating.value = true;
+  if (await itinerariesStore.updateItinerary(updatedItinerary)) {
+    itinerariesStore.currentItinerary = updatedItinerary; // update current itinerary in memory
+  }
+  updating.value = false;
+});
+
+const parentLink = computed(() => {
+  return { name: "product-itineraries", params: { productId: itinerariesStore.itinerary.productId } };
+});
+
+const submitDelete = handleSubmit(async () => {
+  deleting.value = true;
+  if (await itinerariesStore.deleteItinerary(itinerariesStore.itinerary.id)) {
+    router.push(parentLink.value);
+    
+  }
+  deleting.value = false;
+});
+
+const submitCreateSeason = async (values) => {
+  creatingSeason.value = true;
+  if (await itinerariesStore.createSeason(values)) {
+    await itinerariesStore.getItinerary(props.itineraryId);
+    showSeasonModal.value = false;
+  }
+  creatingSeason.value = false;
+};
+
+// watcher
+watch(
+  () => itinerariesStore.itinerary,
+  () => {
+    resetForm({
+      values: {
+        name: itinerariesStore.itinerary.name,
+        lengthInNights: itinerariesStore.itinerary.lengthInNights,
+        productId: itinerariesStore.itinerary.productId,
+        wpId: itinerariesStore.itinerary.wpId,
+      },
+    });
+    seasons.value = itinerariesStore.itinerary.seasons;
+  }
+);
+</script>
+
+<template>
+  <!-- Main Content -->
+  <b-row>
+    <!-- Form -->
+    <b-col lg="6">
+      <div class="card">
+        <div class="card-body">
+          <div class="form-container">
+            <!-- Form -->
+            <form @submit="proceed">
+              <div class="form-block-title">Itinerary Details</div>
+              <div class="name-row">
+                <b-form-group label="Name" label-for="name" class="mb-3">
+                  <b-form-input type="text" v-bind="nameAttrs" v-model="name" id="name" />
+                  <b-form-invalid-feedback :state="false">{{ errors.name }}</b-form-invalid-feedback>
+                </b-form-group>
+                <b-form-group label="Length in Nights" label-for="lengthInNights" class="mb-3" style="max-width: 200px">
+                  <b-form-input type="number" v-bind="lengthInNightsAttrs" v-model="lengthInNights" />
+                  <b-form-invalid-feedback :state="false">{{ errors.lengthInNights }}</b-form-invalid-feedback>
+                </b-form-group>
+              </div>
+
+              <b-form-group label="WordPress Id" label-for="wpId" class="mb-3" style="max-width: 200px">
+                <b-form-input type="text" v-bind="wpIdAttrs" v-model="wpId" id="wpId" />
+                <b-form-invalid-feedback :state="false">{{ errors.wpId }}</b-form-invalid-feedback>
+              </b-form-group>
+            </form>
+          </div>
+
+          <div class="d-flex flex-row-reverse mt-4">
+            <LoadingButton variant="primary" type="submit" class="ms-2" :loading="updating" @click="submitUpdate" :disabled="!canProceed">Save Changes</LoadingButton>
+            <LoadingButton variant="danger" type="submit" :loading="deleting" @click="submitDelete" :disabled="updating">Delete</LoadingButton>
+          </div>
+        </div>
+      </div>
+    </b-col>
+    <!-- Automations -->
+    <b-col lg="6">
+      <div class="card">
+        <div class="card-body">
+          <div class="form-block-title">Seasons</div>
+          <div class="seasons-grid">
+            <div class="seasons-grid__items">
+              <div class="seasons-grid__items__default">Regular</div>
+              <SeasonWidget :season="season" v-for="season in seasons"></SeasonWidget>
+            </div>
+            <div class="seasons-grid__control">
+              <b-button variant="primary" @click="showSeasonModal = true">New Season</b-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </b-col>
+  </b-row>
+
+  <SeasonModal v-if="showSeasonModal" :itinerary-id="props.itineraryId" title="Create New Season" :saving="creatingSeason" @proceed="submitCreateSeason" @cancel="showSeasonModal = false" isCreate></SeasonModal>
+</template>
+
+<style lang="scss" scoped>
+.automation-grid {
+  display: grid;
+  grid-template-columns: 1fr max-content;
+  gap: 1rem;
+  align-items: end;
+}
+
+.name-row {
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  column-gap: 2rem;
+
+  @media only screen and (max-width: 1400px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.seasons-grid {
+  display: grid;
+  grid-template-columns: 1fr max-content;
+  gap: 1rem;
+
+  &__items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    &__default {
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--nano-border-color);
+      border-radius: 5px;
+    }
+  }
+  &__control {
+    display: flex;
+    align-items: flex-end;
+  }
+}
+</style>

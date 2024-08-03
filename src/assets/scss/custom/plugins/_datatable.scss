@@ -1,0 +1,158 @@
+//
+// data table, sorting, pagination, etc.
+//
+
+table.dataTable {
+
+    // Change icons view
+    thead {
+        .sorting,
+        .sorting_asc,
+        .sorting_desc,
+        .sorting_asc_disabled,
+        .sorting_desc_disabled {
+            &:before {
+                position: absolute;
+                opacity: 0.3;
+                right: 0.5rem;
+                left: auto;
+                content: "\F0360";
+                font-family: "Material Design Icons";
+                font-size: 1rem;
+                top: 10px;
+            }
+            &:after {
+                position: absolute;
+                opacity: 0.3;
+                right: 0.5em;
+                left: auto;
+                content: "\F035D";
+                font-family: "Material Design Icons";
+                top: 16px;
+                font-size: 1rem;
+            }
+        }
+        > tr {
+            > th {
+                &.sorting_asc,
+                &.sorting_desc,
+                &.sorting {
+                    padding-right: 30px;
+                    padding-left: $table-cell-padding-x;
+                    position: relative;
+                    cursor: pointer;
+                }
+
+                &.sorting_asc {
+                    &:before {
+                        opacity: 1;
+                    }
+                    &:after {
+                        opacity: 0.3;
+                    }
+                }
+
+                &.sorting_desc {
+                    &:before {
+                        opacity: 0.3;
+                    }
+                    &:after {
+                        opacity: 1;
+                    }
+                }
+            }
+        }
+    }
+
+    tbody {
+        // Multi select table
+
+        > tr.selected,
+        > tr > .selected {
+            background-color: var(--#{$prefix}primary);
+
+            td {
+                border-color: var(--#{$prefix}primary);
+            }
+        }
+        td {
+            &:focus {
+                outline: none !important;
+            }
+        }
+        // Key Tables
+        th.focus,
+        td.focus {
+            outline: 2px solid $primary !important;
+            outline-offset: -1px;
+            background-color: rgba(var(--#{$prefix}primary-rgb), 0.15);
+        }
+    }
+}
+
+// Active status
+.activate-select {
+    .sorting_1 {
+        background-color: var(--#{$prefix}tertiary-bg) !important;
+    }
+}
+
+// datatable
+div.dataTables_wrapper {
+    div.dataTables_filter {
+        text-align: right;
+
+        @media (max-width: 576px) {
+            text-align: center;
+        }
+
+        input {
+            margin-left: 0.5em;
+            margin-right: 0;
+        }
+    }
+    div.dataTables_length {
+        text-align: left;
+        @media (max-width: 576px) {
+            text-align: center;
+        }
+    }
+}
+
+div.table-responsive > div.dataTables_wrapper {
+    > div.row > div[class^="col-"]:last-child {
+        padding-right: 0;
+    }
+    > div.row > div[class^="col-"]:first-child {
+        padding-left: 0;
+    }
+}
+
+div {
+    &.dataTables_scrollBody {
+        border-left: none !important;
+        & > table {
+            margin-bottom: 15px !important;
+            & > :not(:first-child) {
+                border-top: none !important;
+            }
+        }
+    }
+}
+
+// tanstack table footer, pagination, info
+.table-footer{
+    display: grid;
+    grid-template-columns: 1fr max-content max-content;
+    align-items: center;
+    margin-top: 10px;
+    gap: 10px;
+    > div {
+        padding-top: 0 !important;
+    }
+    @include media-breakpoint-down(lg) {
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+}
+

@@ -1,0 +1,9 @@
+.dp__theme_dark {
+    --dp-background-color: var(--#{$prefix}input-bg);
+    --dp-primary-color: var(--#{$prefix}primary);
+
+}
+.dp__theme_light {
+    --dp-primary-color: var(--#{$prefix}primary);
+
+}
