@@ -1,10 +1,16 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import PolicyModal from "./components/policy-modal.vue";
 import PolicyPanel from "./components/policy-panel.vue";
 
 import { usePoliciesStore } from "@/stores/policiesStore";
 const policiesStore = usePoliciesStore();
+
+import { useItinerariesStore } from "@/stores/itinerariesStore";
+const itinerariesStore = useItinerariesStore();
+
+import { useProductsStore } from "@/stores/productsStore";
+const productsStore = useProductsStore();
 
 const loading = ref(true);
 const props = defineProps(["itineraryId"]);
@@ -20,11 +26,6 @@ const deletingPolicy = ref(false);
 
 onMounted(async () => {
   await policiesStore.getItineraryPolicies(props.itineraryId);
-  console.log(policiesStore.itineraryPolicies);
-
-  const initialPolicy = policiesStore.itineraryPolicies.find((policy) => policy.current === true);
-  currentPolicyId.value = initialPolicy.id;
-  selectedPolicyId.value = initialPolicy.id;
 
   loading.value = false;
 });
@@ -57,7 +58,12 @@ const submitDeletePolicy = async (id) => {
   }
   deletingPolicy.value = false;
 };
-
+watch(
+  () => itinerariesStore.itinerary,
+  async () => {
+    await productsStore.getSupplierProducts(itinerariesStore.itinerary.supplierId);
+  }
+);
 </script>
 
 <template>
@@ -77,7 +83,7 @@ const submitDeletePolicy = async (id) => {
   <div v-if="!loading">
     <div v-if="policiesStore.itineraryPolicies">
       <div v-for="policy in policiesStore.itineraryPolicies">
-        <PolicyPanel v-if="policy.id == selectedPolicyId" :policy="policy" :key="policy.id" :itineraryId="props.itineraryId" @tabChange="seasonChange" @deletePolicy="submitDeletePolicy" :deletingPolicy="deletingPolicy" :selectedSeasonId="selectedSeasonId" />
+        <PolicyPanel v-if="policy.id == selectedPolicyId" :products="productsStore.products" :policy="policy" :key="policy.id" :itineraryId="props.itineraryId" @tabChange="seasonChange" @deletePolicy="submitDeletePolicy" :deletingPolicy="deletingPolicy" :selectedSeasonId="selectedSeasonId" />
       </div>
     </div>
     <p v-else class="text-center">No policies found</p>

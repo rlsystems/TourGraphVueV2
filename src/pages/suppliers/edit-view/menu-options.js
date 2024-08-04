@@ -7,14 +7,14 @@ export const menuOptions = [
       iconClassList: ["mdi", "mdi-account-circle", "me-1"]
     },
     {
-      name: "supplier-products",
-      display: "Products",
+      name: "supplier-itineraries",
+      display: "Itineraries",
       icon: true,
       iconClassList: ["mdi", "mdi-account-edit", "me-1"]
     },
     {
-      name: "supplier-itineraries",
-      display: "Itineraries",
+      name: "supplier-products",
+      display: "Products",
       icon: true,
       iconClassList: ["mdi", "mdi-account-edit", "me-1"]
     },

@@ -26,6 +26,10 @@ const props = defineProps({
     type: Object,
     required: false,
   },
+  products: {
+    type: Array,
+    required: false,
+  },
   saving: {
     type: Boolean,
     default: false,
@@ -38,6 +42,9 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+});
+onMounted(async () => {
+ console.log(props.products)
 });
 
 // initial values

@@ -167,27 +167,11 @@ const mainRoutes = [
         component: () => import("@/pages/suppliers/edit-view/configuration/supplier-configuration.vue"),
       },
       {
-        name: "supplier-products",
-        path: "products",
-        props: true,
-        meta: {
-          activeTab: 1,
-          breadcrumbs: [{
-            routerName: "suppliers",
-            label: "Suppliers"
-          },
-          {
-            label: "Supplier Products"
-          }]
-        },
-        component: () => import("@/pages/suppliers/edit-view/products/supplier-products.vue"),
-      },
-      {
         name: "supplier-itineraries",
         path: "itineraries",
         props: true,
         meta: {
-          activeTab: 2,
+          activeTab: 1,
           breadcrumbs: [{
             routerName: "suppliers",
             label: "Suppliers"
@@ -197,6 +181,22 @@ const mainRoutes = [
           }]
         },
         component: () => import("@/pages/suppliers/edit-view/itineraries/supplier-itineraries.vue"),
+      },
+      {
+        name: "supplier-products",
+        path: "products",
+        props: true,
+        meta: {
+          activeTab: 2,
+          breadcrumbs: [{
+            routerName: "suppliers",
+            label: "Suppliers"
+          },
+          {
+            label: "Supplier Products"
+          }]
+        },
+        component: () => import("@/pages/suppliers/edit-view/products/supplier-products.vue"),
       },
       {
         name: "supplier-promotions",

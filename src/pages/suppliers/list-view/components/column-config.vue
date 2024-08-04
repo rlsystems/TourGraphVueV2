@@ -20,6 +20,18 @@ export const columns = [
       }),
   }),
   columnHelper.display({
+    id: "itineraryCount",
+    label: "Itineraries",
+    enableSorting: false,
+    cell: ({ row }) =>
+      h(CountDisplay, {
+        title: "Itineraries",
+        titleSingle: "Itinerary",
+        count: row.original.itineraries.length,
+        link: `/suppliers/${row.original.id}/itineraries`, 
+      }),
+  }),
+  columnHelper.display({
     id: "productCount",
     label: "Products",
     enableSorting: false,
