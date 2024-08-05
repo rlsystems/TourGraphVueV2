@@ -4,15 +4,15 @@ import { toast } from "vue3-toastify";
 
 export const usePoliciesStore = defineStore("policies", {
   state: () => ({
-    itineraryPoliciesList: [],
+    itineraryProductsList: [],
   }),
   getters: {
-    itineraryPolicies: (state) => state.itineraryPoliciesList,
+    itineraryProducts: (state) => state.itineraryProductsList,
   },
   actions: {
-    async getItineraryPolicies(id) { 
+    async getItineraryProducts(id) { 
       const response = await agent.get(`/policies?itineraryId=${id}`); 
-      this.itineraryPoliciesList = response.data;
+      this.itineraryProductsList = response.data;
     },
 
     // Policies

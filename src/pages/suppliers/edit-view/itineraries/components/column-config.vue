@@ -85,21 +85,21 @@ export const columns = [
       });
     },
   }),
-  columnHelper.accessor("policy", {
-    label: "Policy",
-    enableSorting: true,
-    cell: ({ row }) => {
-      const policiesItineraryLink = computed(() => {
-        return { name: "itinerary-policies", params: { itineraryId: row.original.id } };
-      });
-      return h(PolicyLabel, {
-        count: row.original.policies.length,
-        ratesMissing: row.original.ratesMissing,
-        link: policiesItineraryLink,
-        minWidth: "100px",
-      });
-    },
-  }),
+  // columnHelper.accessor("policy", {
+  //   label: "Policy",
+  //   enableSorting: true,
+  //   cell: ({ row }) => {
+  //     const policiesItineraryLink = computed(() => {
+  //       return { name: "itinerary-policies", params: { itineraryId: row.original.id } };
+  //     });
+  //     return h(PolicyLabel, {
+  //       count: row.original.policies.length,
+  //       ratesMissing: row.original.ratesMissing,
+  //       link: policiesItineraryLink,
+  //       minWidth: "100px",
+  //     });
+  //   },
+  // }),
 
   columnHelper.accessor("edit", {
     label: "",
