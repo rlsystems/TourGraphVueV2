@@ -1,11 +1,11 @@
 <script>
 import { h, computed } from "vue";
 import { createColumnHelper } from "@tanstack/vue-table";
-import PolicyLabel from "./policy-label.vue";
+import ProductsLabel from "./products-label.vue";
 import EditItineraryButton from "./edit-itinerary-button.vue";
 
 import AutomationWidget from "./automation-widget.vue";
-import RelatedPopover from "./related-itineraries-popover.vue";
+import RelatedPopover from "./related-popover.vue";
 
 import CountDisplay from "@/components/count-display.vue";
 import IdBadge from "@/components/id-badge.vue";
@@ -58,7 +58,7 @@ export const columns = [
     cell: ({ row }) =>
       h(IdBadge, {
         display: row.original.wpId,
-        idLink: true,
+        isLink: true,
       }),
   }),
   columnHelper.accessor("enableAutomation", {
@@ -82,6 +82,15 @@ export const columns = [
         count: row.original.departures.length,
         link: datesItineraryLink,
         minWidth: "100px",
+      });
+    },
+  }),
+  columnHelper.accessor("itineraryProducts", {
+    label: "Products",
+    enableSorting: true,
+    cell: ({ row }) => {
+      return h(ProductsLabel, {
+        itinerary: row.original
       });
     },
   }),

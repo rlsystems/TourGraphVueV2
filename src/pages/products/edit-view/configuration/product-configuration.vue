@@ -29,7 +29,7 @@ const selectSupplierOptions = ref(suppliersStore.supplierListFull);
 const initialValues = ref({
   name: productsStore.product?.name,
   notes: productsStore.product?.notes,
-  supplierId: productsStore.product?.supplierId, // TODO FIX: supplier dropdown not loading correctly
+  supplierId: productsStore.product?.supplierId, 
   wpId: productsStore.product?.wpId,
 });
 
@@ -118,7 +118,7 @@ watch(
                 <b-form-invalid-feedback :state="false">{{ errors.name }}</b-form-invalid-feedback>
               </b-form-group>
               <div class="mb-2" style="max-width: 600px">
-                <LoadingSelect v-model="supplierId" v-bind="supplierIdAttrs" id="filterSupplier" :loading="suppliersLoading" :options="selectSupplierOptions" label="Supplier" style="width: 100%" />
+                <LoadingSelect v-model="supplierId" v-bind="supplierIdAttrs" id="filterSupplier" :loading="suppliersLoading" :options="selectSupplierOptions" label="Supplier" style="width: 100%" :disabled="productsStore.product?.itineraryCount > 0" />
                 <b-form-invalid-feedback :state="false">{{ errors.supplierId }}</b-form-invalid-feedback>
               </div>
               <b-form-group label="Wordpress Id" label-for="wpId" class="mb-2" style="max-width: 150px">

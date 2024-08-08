@@ -28,20 +28,6 @@ export const columns = [
       }),
   }),
   columnHelper.display({
-    id: "itineraries",
-    label: "Itineraries",
-    enableSorting: false,
-    cell: ({ row }) =>
-      h(CountDisplay, {
-        title: "Itineraries",
-        titleSingle: "Itinerary",
-        //count: row.original.itineraries.length,
-        count: 0,
-
-        link: `/products/${row.original.id}/itineraries`,
-      }),
-  }),
-  columnHelper.display({
     id: "rooms",
     label: "Room Types",
     enableSorting: false,
@@ -51,6 +37,18 @@ export const columns = [
         titleSingle: "Room Type",
         count: row.original.rooms.length,
         link: `/products/${row.original.id}/rooms`,
+      }),
+  }),
+  columnHelper.display({
+    id: "itineraries",
+    label: "Itineraries",
+    enableSorting: false,
+    cell: ({ row }) =>
+      h(CountDisplay, {
+        title: "Itineraries",
+        titleSingle: "Itinerary",
+        count: row.original.itineraryCount,
+        link: `/suppliers/${row.original.supplierId}/itineraries`,
       }),
   }),
   columnHelper.accessor("edit", {

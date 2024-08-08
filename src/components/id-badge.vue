@@ -1,6 +1,6 @@
 <template>
   <a v-if="props.isLink && props.display" :href="wordpressUrl" target="_blank">
-    <b-badge :class="wpBadgeClass">{{ !props.display ? "Missing" : props.display }}</b-badge>
+    <b-badge variant="secondary" :class="wpBadgeClass">{{ !props.display ? "Missing" : props.display }}</b-badge>
   </a>
   <b-badge v-else :class="wpBadgeClass">{{ !props.display ? "Missing" : props.display }}</b-badge>
 

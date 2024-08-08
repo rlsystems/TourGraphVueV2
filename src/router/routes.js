@@ -79,7 +79,10 @@ const mainRoutes = [
         props: true,
         meta: {
           activeTab: 0,
-          breadcrumbs: [
+          breadcrumbs: [{
+            routerName: "suppliers",
+            label: "Suppliers"
+          },
           {
             label: "Itinerary Configuration"
           }]

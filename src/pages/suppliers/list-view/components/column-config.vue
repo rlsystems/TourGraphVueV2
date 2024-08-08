@@ -6,8 +6,6 @@ import { h } from "vue";
 import AvatarTitleGroup from "@/components/avatar-title-group.vue";
 import { useSuppliersStore } from "@/stores/suppliersStore.js";
 
-const suppliersStore = useSuppliersStore();
-
 const columnHelper = createColumnHelper();
 export const columns = [
   columnHelper.accessor("name", {
@@ -20,18 +18,6 @@ export const columns = [
       }),
   }),
   columnHelper.display({
-    id: "itineraryCount",
-    label: "Itineraries",
-    enableSorting: false,
-    cell: ({ row }) =>
-      h(CountDisplay, {
-        title: "Itineraries",
-        titleSingle: "Itinerary",
-        count: row.original.itineraries.length,
-        link: `/suppliers/${row.original.id}/itineraries`, 
-      }),
-  }),
-  columnHelper.display({
     id: "productCount",
     label: "Products",
     enableSorting: false,
@@ -41,6 +27,18 @@ export const columns = [
         titleSingle: "Product",
         count: row.original.products.length,
         link: `/suppliers/${row.original.id}/products`, 
+      }),
+  }),
+  columnHelper.display({
+    id: "itineraryCount",
+    label: "Itineraries",
+    enableSorting: false,
+    cell: ({ row }) =>
+      h(CountDisplay, {
+        title: "Itineraries",
+        titleSingle: "Itinerary",
+        count: row.original.itineraries.length,
+        link: `/suppliers/${row.original.id}/itineraries`, 
       }),
   }),
   columnHelper.display({

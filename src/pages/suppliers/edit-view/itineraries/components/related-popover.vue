@@ -5,11 +5,11 @@ const props = defineProps(["itinerary"]);
 <template>
   <!-- Title / Stats -->
   <div class="d-flex flex-column">
-    <b-button class="related-button text-info" v-if="props.itinerary.relatedItineraries.length > 0" variant="light" :id="props.itinerary.id">{{ props.itinerary.relatedItineraries.length }} Related Itineraries</b-button>
+    <b-button class="related-button text-info" v-if="props.itinerary.itineraryProducts?.length > 0" variant="light" :id="props.itinerary.id">{{ props.itinerary.itineraryProducts?.length }} Products</b-button>
     <b-popover v-if="props.itinerary.relatedItineraries.length > 0" :target="props.itinerary.id" placement="right">
       <ul class="mb-0">
         <li v-for="relatedItinerary in props.itinerary.relatedItineraries" class="related text-info">
-          <router-link :to="{ name: 'itinerary-edit', params: { itineraryId: relatedItinerary.id } }">
+          <router-link :to="{ name: 'itinerary-edit', params: { itineraryId: relatedItinerary.id }}">
             {{ relatedItinerary.name }}
           </router-link>
         </li>
