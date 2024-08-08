@@ -62,7 +62,7 @@ const submitCreate = async (data) => {
   </div>
 
   <!-- Add Departure Date Modal -->
-  <DepartureModal v-if="showDepartureModal" :promotions="itinerariesStore.itinerary.promotionOptions" :saving="submitting" @proceed="submitCreate" @cancel="showDepartureModal = false" isCreate />
+  <DepartureModal v-if="showDepartureModal" :itineraryProductOptions="itinerariesStore.itinerary.itineraryProducts"  :promotions="itinerariesStore.itinerary.promotionOptions" :saving="submitting" @proceed="submitCreate" @cancel="showDepartureModal = false" isCreate />
 </template>
 
 <style scoped lang="scss">

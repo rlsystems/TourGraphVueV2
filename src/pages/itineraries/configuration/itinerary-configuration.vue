@@ -1,9 +1,8 @@
 <script setup>
 import LoadingButton from "@/components/loading-button.vue";
 
-import SeasonModal from "./components/season-modal.vue";
-import SeasonWidget from "./components/season-widget.vue";
-import Multiselect from "vue-multiselect";
+import SeasonsWidget from "./components/seasons-widget.vue";
+import ItineraryProductsWidget from "./components/itinerary-products-widget.vue";
 
 import { computed, ref, onMounted, watch } from "vue";
 import { useForm } from "vee-validate";
@@ -19,10 +18,10 @@ const itinerariesStore = useItinerariesStore();
 const props = defineProps(["itineraryId"]);
 const updating = ref(false);
 const deleting = ref(false);
-const seasons = ref(itinerariesStore.itinerary?.seasons);
-const creatingSeason = ref(false);
-const showSeasonModal = ref(false);
 
+const seasons = ref(itinerariesStore.itinerary?.seasons);
+const itineraryProducts = ref(itinerariesStore.itinerary?.itineraryProducts);
+const productOptions = ref(itinerariesStore.itinerary?.productOptions);
 
 
 // initial values
@@ -72,19 +71,9 @@ const submitDelete = handleSubmit(async () => {
   deleting.value = true;
   if (await itinerariesStore.deleteItinerary(itinerariesStore.itinerary.id)) {
     router.push(parentLink.value);
-    
   }
   deleting.value = false;
 });
-
-const submitCreateSeason = async (values) => {
-  creatingSeason.value = true;
-  if (await itinerariesStore.createSeason(values)) {
-    await itinerariesStore.getItinerary(props.itineraryId);
-    showSeasonModal.value = false;
-  }
-  creatingSeason.value = false;
-};
 
 // watcher
 watch(
@@ -99,19 +88,20 @@ watch(
       },
     });
     seasons.value = itinerariesStore.itinerary.seasons;
+    itineraryProducts.value = itinerariesStore.itinerary.itineraryProducts;
+    productOptions.value = itinerariesStore.itinerary.productOptions;
+
   }
 );
 </script>
 
 <template>
-  <!-- Main Content -->
   <b-row>
-    <!-- Form -->
+    <!-- Itinerary Details -->
     <b-col lg="6">
       <div class="card">
         <div class="card-body">
           <div class="form-container">
-            <!-- Form -->
             <form @submit="proceed">
               <div class="form-block-title">Itinerary Details</div>
               <div class="name-row">
@@ -124,14 +114,12 @@ watch(
                   <b-form-invalid-feedback :state="false">{{ errors.lengthInNights }}</b-form-invalid-feedback>
                 </b-form-group>
               </div>
-
               <b-form-group label="WordPress Id" label-for="wpId" class="mb-3" style="max-width: 200px">
                 <b-form-input type="text" v-bind="wpIdAttrs" v-model="wpId" id="wpId" />
                 <b-form-invalid-feedback :state="false">{{ errors.wpId }}</b-form-invalid-feedback>
               </b-form-group>
             </form>
           </div>
-
           <div class="d-flex flex-row-reverse mt-4">
             <LoadingButton variant="primary" type="submit" class="ms-2" :loading="updating" @click="submitUpdate" :disabled="!canProceed">Save Changes</LoadingButton>
             <LoadingButton variant="danger" type="submit" :loading="deleting" @click="submitDelete" :disabled="updating">Delete</LoadingButton>
@@ -139,35 +127,15 @@ watch(
         </div>
       </div>
     </b-col>
-    <!-- Automations -->
+    <!-- Seasons / Products -->
     <b-col lg="6">
-      <div class="card">
-        <div class="card-body">
-          <div class="form-block-title">Seasons</div>
-          <div class="seasons-grid">
-            <div class="seasons-grid__items">
-              <div class="seasons-grid__items__default">Regular</div>
-              <SeasonWidget :season="season" v-for="season in seasons"></SeasonWidget>
-            </div>
-            <div class="seasons-grid__control">
-              <b-button variant="primary" @click="showSeasonModal = true">New Season</b-button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <SeasonsWidget :seasons="seasons" :itineraryId="itinerariesStore.itinerary?.id"></SeasonsWidget>
+      <ItineraryProductsWidget :itineraryProducts="itineraryProducts" :productOptions="productOptions" :itineraryId="itinerariesStore.itinerary?.id"></ItineraryProductsWidget>
     </b-col>
   </b-row>
-
-  <SeasonModal v-if="showSeasonModal" :itinerary-id="props.itineraryId" title="Create New Season" :saving="creatingSeason" @proceed="submitCreateSeason" @cancel="showSeasonModal = false" isCreate></SeasonModal>
 </template>
 
 <style lang="scss" scoped>
-.automation-grid {
-  display: grid;
-  grid-template-columns: 1fr max-content;
-  gap: 1rem;
-  align-items: end;
-}
 
 .name-row {
   display: grid;
@@ -179,25 +147,5 @@ watch(
   }
 }
 
-.seasons-grid {
-  display: grid;
-  grid-template-columns: 1fr max-content;
-  gap: 1rem;
 
-  &__items {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-
-    &__default {
-      padding: 0.5rem 1rem;
-      border: 1px solid var(--nano-border-color);
-      border-radius: 5px;
-    }
-  }
-  &__control {
-    display: flex;
-    align-items: flex-end;
-  }
-}
 </style>

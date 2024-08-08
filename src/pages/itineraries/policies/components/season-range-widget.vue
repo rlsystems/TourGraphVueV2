@@ -27,7 +27,7 @@ const submitUpdate = async (data) => {
   };
 
   if (await policiesStore.updateSeasonRange(rangeObject)) {
-    await policiesStore.getItineraryPolicies(props.itineraryId);
+    await policiesStore.getItineraryProducts(props.itineraryId);
     show.value = false;
   }
 
@@ -37,7 +37,7 @@ const submitUpdate = async (data) => {
 const submitDelete = async (id) => {
   deleting.value = true;
   if (await policiesStore.deleteSeasonRange(id)) {
-    await policiesStore.getItineraryPolicies(props.itineraryId);
+    await policiesStore.getItineraryProducts(props.itineraryId);
     show.value = false;
   }
   deleting.value = false;

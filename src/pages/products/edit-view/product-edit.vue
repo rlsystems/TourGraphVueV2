@@ -32,7 +32,7 @@ onUnmounted(() => {
 
 <template>
   <Layout>
-    <PageNavigationTop :activeTab="route.meta.activeTab"  :menu-options="menuOptions" :title="productsStore.product.name" :subParentName="productsStore.product.supplierName" :subParentLink="parentLink" :loading="initialLoad" />
+    <PageNavigationTop :activeTab="route.meta.activeTab"  :menu-options="menuOptions" :title="productsStore.product.name" :parentName="productsStore.product.supplierName" :parentLink="parentLink" :loading="initialLoad" />
     <router-view></router-view>
   </Layout>
 </template>

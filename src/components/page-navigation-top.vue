@@ -36,18 +36,13 @@ const props = defineProps({
     <div class="card-body">
       <div class="page-nav-top">
         <div v-if="!loading" class="page-nav-top__title-area">
-          <div class="page-nav-top__title-area__title text-dark">{{ props.title }}</div>
           <div class="page-nav-top__title-area__sub">
-            <router-link v-if="props.subParentLink" :to="props.subParentLink">
-              <div class="page-nav-top__title-area__sub__item">{{ props.subParentName }}</div>
-            </router-link>
-            <div v-else class="page-nav-top__title-area__sub">{{ props.subParentName }}</div>
-            <span v-if="props.parentLink">/</span>
             <router-link v-if="props.parentLink" :to="props.parentLink">
               <div class="page-nav-top__title-area__sub__item">{{ props.parentName }}</div>
             </router-link>
-            <div v-else class="page-nav-top__title-area__sub">{{ props.parentName }}</div>
           </div>
+          <div class="page-nav-top__title-area__title text-dark">{{ props.title }}</div>
+
         </div>
         <!-- Loading Spinner -->
         <div v-else class="page-nav-top__title-area">

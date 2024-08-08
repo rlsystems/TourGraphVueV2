@@ -49,7 +49,7 @@ const mainRoutes = [
         path: "rooms",
         props: true,
         meta: {
-          activeTab: 2,
+          activeTab: 1,
           breadcrumbs: [{
             routerName: "products",
             label: "Products"

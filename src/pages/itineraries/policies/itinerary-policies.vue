@@ -6,18 +6,14 @@ import PolicyPanel from "./components/policy-panel.vue";
 import { usePoliciesStore } from "@/stores/policiesStore";
 const policiesStore = usePoliciesStore();
 
-import { useItinerariesStore } from "@/stores/itinerariesStore";
-const itinerariesStore = useItinerariesStore();
-
 const loading = ref(true);
 const props = defineProps(["itineraryId"]);
 
 const showPolicyModal = ref(false);
 const submitting = ref(false);
 
-const currentPolicyId = ref(null);
 const selectedItineraryProductId = ref(null);
-
+const initialPolicyId = ref(null);
 const selectedPolicyId = ref(null);
 
 const selectedSeasonId = ref("00000000-0000-0000-0000-000000000000");
@@ -26,13 +22,25 @@ const deletingPolicy = ref(false);
 
 onMounted(async () => {
   await policiesStore.getItineraryProducts(props.itineraryId);
-  console.log(policiesStore.itineraryProducts);
+  const initialItineraryProduct = policiesStore.itineraryProducts?.[0];
+  setItineraryProduct(initialItineraryProduct);
+
   loading.value = false;
 });
 
+// set policy when selecting itinerary product
+const setItineraryProduct = (itineraryProduct) => {
+  if (itineraryProduct) {
+    selectedItineraryProductId.value = itineraryProduct.id;
+    const initialPolicy = itineraryProduct.policies.find((policy) => policy.current === true);
+    selectedPolicyId.value = initialPolicy.id;
+    initialPolicyId.value = initialPolicy.id; // fallback for delete
+  }
+};
+
 // modal submit
 const submitCreatePolicy = async (data) => {
-  data.itineraryId = props.itineraryId;
+  data.itineraryProductId = selectedItineraryProductId.value;
   submitting.value = true;
   if (await policiesStore.createPolicy(data)) {
     await policiesStore.getItineraryProducts(props.itineraryId);
@@ -50,8 +58,7 @@ const submitDeletePolicy = async (id) => {
   deletingPolicy.value = true;
   if (await policiesStore.deletePolicy(id)) {
     await policiesStore.getItineraryProducts(props.itineraryId);
-    //selectedItineraryProductId.value = 
-    selectedPolicyId.value = currentPolicyId.value;
+    selectedPolicyId.value = initialPolicyId.value;
 
     showPolicyModal.value = false;
   }
@@ -63,19 +70,16 @@ const submitDeletePolicy = async (id) => {
   <!-- Extra Row -->
   <div class="policy-header mb-3">
     <div class="policy-header__options">
-      <b-button pill :variant="itineraryProduct.id == selectedItineraryProductId ? 'success' : 'outline-light'" v-for="itineraryProduct in policiesStore.itineraryProducts" @click="selectedItineraryProductId = policy.id">{{ itineraryProduct.productName }}</b-button>
-      <b-button pill variant="soft-dark"><i class="mdi mdi-filter-variant"></i> </b-button>
-    </div>
-    <div class="policy-header__cta">
-      <b-button variant="primary" @click="showPolicyModal = true">New Policy</b-button>
+      <b-button pill :variant="itineraryProduct.id == selectedItineraryProductId ? 'success' : 'outline-light'" v-for="itineraryProduct in policiesStore.itineraryProducts" @click="setItineraryProduct(itineraryProduct)">{{ itineraryProduct.productName }}</b-button>
     </div>
   </div>
 
   <!-- Top Row -->
   <div class="policy-header mb-3">
     <div class="policy-header__options">
-      <b-button pill :variant="policy.id == selectedPolicyId ? 'success' : 'outline-light'" v-for="policy in policiesStore.itineraryPolicies" @click="selectedPolicyId = policy.id">{{ policy.current ? "Current Policy" : policy.startDate }}</b-button>
-      <b-button pill variant="soft-dark"><i class="mdi mdi-filter-variant"></i> </b-button>
+      <div v-for="itineraryProduct in policiesStore.itineraryProducts">
+        <b-button v-if="itineraryProduct.id == selectedItineraryProductId" pill :variant="policy.id == selectedPolicyId ? 'success' : 'outline-light'" v-for="policy in itineraryProduct.policies" @click="selectedPolicyId = policy.id">{{ policy.current ? "Current Policy" : policy.startDate }}</b-button>
+      </div>
     </div>
     <div class="policy-header__cta">
       <b-button variant="primary" @click="showPolicyModal = true">New Policy</b-button>
@@ -83,9 +87,11 @@ const submitDeletePolicy = async (id) => {
   </div>
   <!-- Main Content -->
   <div v-if="!loading">
-    <div v-if="policiesStore.itineraryPolicies">
-      <div v-for="policy in policiesStore.itineraryPolicies">
-        <PolicyPanel v-if="policy.id == selectedPolicyId" :policy="policy" :key="policy.id" :itineraryId="props.itineraryId" @tabChange="seasonChange" @deletePolicy="submitDeletePolicy" :deletingPolicy="deletingPolicy" :selectedSeasonId="selectedSeasonId" />
+    <div v-if="policiesStore.itineraryProducts">
+      <div v-for="itineraryProduct in policiesStore.itineraryProducts">
+        <div v-for="policy in itineraryProduct.policies">
+          <PolicyPanel v-if="policy.id == selectedPolicyId" :policy="policy" :key="policy.id" :itineraryId="props.itineraryId" @tabChange="seasonChange" @deletePolicy="submitDeletePolicy" :deletingPolicy="deletingPolicy" :selectedSeasonId="selectedSeasonId" />
+        </div>
       </div>
     </div>
     <p v-else class="text-center">No policies found</p>
@@ -97,18 +103,19 @@ const submitDeletePolicy = async (id) => {
   </div>
 
   <!-- Modal -->
-  <PolicyModal v-if="showPolicyModal" :itineraryId="props.itineraryId" title="Add New Policy" isCreate :saving="submitting" @proceed="submitCreatePolicy" @cancel="showPolicyModal = false" />
+  <PolicyModal v-if="showPolicyModal" title="Add New Policy" isCreate :saving="submitting" @proceed="submitCreatePolicy" @cancel="showPolicyModal = false" />
 </template>
 
 <style lang="scss" scoped>
 .policy-header {
   display: grid;
   grid-template-columns: 1fr max-content;
-  gap: 1rem;
 
   &__options {
     display: flex;
-    gap: 1rem;
+    button {
+      margin-right: 1rem;
+    }
   }
 
   &__cta {

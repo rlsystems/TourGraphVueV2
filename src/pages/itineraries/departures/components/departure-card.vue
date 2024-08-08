@@ -48,8 +48,14 @@ const submitDelete = async (departureID) => {
             </h5>
             <DepartureStatus :departure="props.departure"></DepartureStatus>
           </div>
+          <!-- Product -->
+          <div class="departure-title-group">
+            <div >
+              {{ props.departure.productName }}
+            </div>
+          </div>
           <!-- Season -->
-          <div :class="{ 'text-info': props.departure.seasonName != 'Regular' }"> {{ props.departure.seasonName }} Season</div>
+          <div :class="{ 'text-info': props.departure.seasonName != 'Regular' }">{{ props.departure.seasonName }} Season</div>
           <!-- Promotions -->
           <DeparturePromotions :departure="props.departure"></DeparturePromotions>
         </div>
@@ -85,8 +91,8 @@ const submitDelete = async (departureID) => {
 
       &__main {
         display: grid;
-        grid-template-columns: max-content 1fr 1fr;
-        justify-items: center;
+        grid-template-columns: 200px 300px 1fr 1fr;
+        //justify-items: center;
         align-items: center;
         gap: 2rem;
       }
@@ -96,8 +102,6 @@ const submitDelete = async (departureID) => {
           margin-right: 1rem;
         }
       }
-
-
     }
     &__rates {
       margin-top: 1rem;

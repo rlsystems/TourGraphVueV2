@@ -43,14 +43,12 @@ const props = defineProps({
 const initialValues = ref({
   name: props.data?.name || "",
   supplierId: props.supplierId ? props.supplierId : props.data?.supplierId || null, // will have supplierId when creating new product in supplier edit view
-  bookingConfigurationId: props.data?.bookingConfigurationId || 1,
 });
 
 // schema
 const schema = yup.object({
   name: yup.string().required(),
   supplierId: yup.string().required(),
-  bookingConfigurationId: yup.string().required(),
 });
 
 // veevalidate form object
@@ -62,7 +60,6 @@ const { handleSubmit, defineField, errors, meta } = useForm({
 // fields
 const [name, nameAttrs] = defineField("name");
 const [supplierId, supplierIdAttrs] = defineField("supplierId");
-const [bookingConfigurationId, bookingConfigurationIdAttrs] = defineField("bookingConfigurationId");
 
 const canProceed = computed(() => {
   return meta.value.dirty && meta.value.valid;
@@ -115,38 +112,7 @@ onMounted(async () => {
         <b-form-invalid-feedback :state="false">{{ errors.supplierId }}</b-form-invalid-feedback>
 
 
-        <div class="form-block-title mt-4">Booking Configuration</div>
-        <div class="d-inline-flex flex-wrap">
-          <div class="radio-group me-2 mb-1">
-            <input name="bookingConfigurationId" type="radio" class="radio-group__input" id="configFixed" value="1" v-bind="bookingConfigurationIdAttrs" v-model="bookingConfigurationId" />
-            <label for="configFixed" class="radio-group__label">
-              <span class="radio-group__label__button"></span>
-              <div class="radio-group__label__text">
-                <div class="radio-group__label__text__title">Fixed Itineraries</div>
-              </div>
-            </label>
-          </div>
 
-          <div class="radio-group me-2 mb-1">
-            <input name="bookingConfigurationId" type="radio" class="radio-group__input" id="configOpen" value="2" v-bind="bookingConfigurationIdAttrs" v-model="bookingConfigurationId" />
-            <label for="configOpen" class="radio-group__label">
-              <span class="radio-group__label__button"></span>
-              <div class="radio-group__label__text">
-                <div class="radio-group__label__text__title">Open Itineraries</div>
-              </div>
-            </label>
-          </div>
-
-          <div class="radio-group me-2 mb-1">
-            <input name="bookingConfigurationId" type="radio" class="radio-group__input" id="configNightly" value="3" v-bind="bookingConfigurationIdAttrs" v-model="bookingConfigurationId" />
-            <label for="configNightly" class="radio-group__label">
-              <span class="radio-group__label__button"></span>
-              <div class="radio-group__label__text">
-                <div class="radio-group__label__text__title">Nightly</div>
-              </div>
-            </label>
-          </div>
-        </div>
       </form>
     </div>
     <div class="modal-footer footer-controls border-top-0">

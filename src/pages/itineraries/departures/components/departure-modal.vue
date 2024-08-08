@@ -13,7 +13,8 @@ const layoutStore = useLayoutStore();
 const { theme } = storeToRefs(layoutStore);
 const emit = defineEmits(["proceed", "cancel", "proceedDelete"]);
 
-const promotionSelectOptions = ref([]);
+const promotionSelectOptions = ref([]); // multi select
+const selectItineraryProductOptions = ref(null);
 
 // props
 const props = defineProps({
@@ -22,6 +23,10 @@ const props = defineProps({
     required: false,
   },
   promotions: {
+    type: Array,
+    required: false,
+  },
+  itineraryProductOptions: {
     type: Array,
     required: false,
   },
@@ -44,21 +49,29 @@ onMounted(async () => {
     id: obj.id,
     name: obj.name,
   }));
-  console.log(promotionSelectOptions);
-  console.log(props.promotions);
 
+  selectItineraryProductOptions.value = props.itineraryProductOptions.map((obj) => ({
+    value: obj.productId,
+    text: obj.productName,
+  }));
+  selectItineraryProductOptions.value.unshift({
+    value: null,
+    text: "Select a product",
+  });
 });
 
 // initial values
 const initialValues = ref({
   startDate: props.data?.startDate,
   itineraryId: props.data?.itineraryId,
-  promotions: props.data?.promotions
+  productId: props.data ? props.data?.productId : props.itineraryProductOptions.length == 1 ? props.itineraryProductOptions[0].productId : null,
+  promotions: props.data?.promotions,
 });
 
 // schema
 const schema = yup.object({
   startDate: yup.string().required(),
+  productId: yup.string().required(),
 });
 
 // veevalidate form object
@@ -70,6 +83,7 @@ const { handleSubmit, defineField, errors, meta } = useForm({
 // fields
 const [startDate, startDateAttrs] = defineField("startDate");
 const [promotions, promotionsAttrs] = defineField("promotions");
+const [productId, productIdAttrs] = defineField("productId");
 
 const canProceed = computed(() => {
   return meta.value.dirty && meta.value.valid;
@@ -82,9 +96,7 @@ const close = async () => {
   emit("cancel");
 };
 const proceed = handleSubmit((values) => {
-
-  
-  const promotionIds = values.promotions?.map(promotion => promotion.id);
+  const promotionIds = values.promotions?.map((promotion) => promotion.id);
   values.promotions = promotionIds;
 
   let updatedObject = { ...props.data, ...values };
@@ -101,11 +113,15 @@ const proceedDelete = handleSubmit(() => {
     <div class="">
       <form @submit="proceed" class="my-2">
         <div class="grid">
+          <b-form-group v-if="isCreate" label="Select Product" class="mb-2" label-for="productSelect" >
+            <b-form-select id="productSelect" v-bind="productIdAttrs" v-model="productId" :options="selectItineraryProductOptions" />
+            <b-form-invalid-feedback :state="false">{{ errors.productId }}</b-form-invalid-feedback>
+          </b-form-group>
           <b-form-group label="Start Date" label-for="startDate" class="mb-2">
             <VueDatePicker v-bind="startDateAttrs" v-model="startDate" :dark="theme === 'dark'" model-type="yyyy-MM-dd" auto-apply :hide-input-icon="true" :enable-time-picker="false" placeholder="Select Date" />
             <b-form-invalid-feedback :state="false">{{ errors.startDate }}</b-form-invalid-feedback>
           </b-form-group>
-          <b-form-group label="Promotions" label-for="promotionSelect" class="my-2">
+          <b-form-group label="Promotions" label-for="promotionSelect" class="mb-2">
             <multiselect id="promotionSelect" v-if="props.promotions" v-model="promotions" :options="promotionSelectOptions" track-by="id" label="name" :multiple="true" :searchable="false"> </multiselect>
           </b-form-group>
         </div>
@@ -128,6 +144,10 @@ const proceedDelete = handleSubmit(() => {
   display: grid;
   grid-template-columns: 1fr;
   column-gap: 3rem;
+
+  & legend {
+    font-weight: 700 !important;
+  }
 
   & .form-switch {
     margin-top: 2.3rem;

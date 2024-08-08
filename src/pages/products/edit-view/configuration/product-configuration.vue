@@ -31,18 +31,16 @@ const initialValues = ref({
   notes: productsStore.product?.notes,
   supplierId: productsStore.product?.supplierId, // TODO FIX: supplier dropdown not loading correctly
   wpId: productsStore.product?.wpId,
-  bookingConfigurationId: productsStore.product?.bookingConfigurationId,
 });
 
 // schema
 const schema = yup.object({
   name: yup.string().required(),
   supplierId: yup.string().required(),
-  bookingConfigurationId: yup.string().required(),
 });
 
 // veevalidate form object
-const { handleSubmit, defineField, errors, meta, setFieldValue, resetForm } = useForm({
+const { handleSubmit, defineField, errors, meta, resetForm } = useForm({
   initialValues: initialValues,
   validationSchema: schema,
 });
@@ -53,7 +51,6 @@ const [notes, notesAttrs] = defineField("notes");
 const [supplierId, supplierIdAttrs] = defineField("supplierId");
 const [wpId, wpIdAttrs] = defineField("wpId");
 
-const [bookingConfigurationId, bookingConfigurationIdAttrs] = defineField("bookingConfigurationId");
 
 const canProceed = computed(() => {
   return meta.value.dirty && meta.value.valid;
@@ -101,8 +98,6 @@ watch(
         supplierId: productsStore.product.supplierId,
         notes: productsStore.product.notes,
         wpId: productsStore.product.wpId,
-
-        bookingConfigurationId: productsStore.product.bookingConfigurationId,
       },
     });
   }
@@ -138,40 +133,7 @@ watch(
             </b-form-group>
           </div>
 
-          <!-- <LoadingSelect v-model="filterSupplierSelected" id="filterSupplier" :loading="loadingSuppliers" :options="filterSupplierOptions" label="Supplier" style="width: 200px" /> -->
-
-          <div class="form-block-title mt-4">Booking Configuration</div>
-          <div class="d-inline-flex flex-wrap">
-            <div class="radio-group me-2 mb-1">
-              <input name="bookingConfigurationId" type="radio" class="radio-group__input" id="configFixed" value="1" v-bind="bookingConfigurationIdAttrs" v-model="bookingConfigurationId" />
-              <label for="configFixed" class="radio-group__label">
-                <span class="radio-group__label__button"></span>
-                <div class="radio-group__label__text">
-                  <div class="radio-group__label__text__title">Fixed Itineraries</div>
-                </div>
-              </label>
-            </div>
-
-            <div class="radio-group me-2 mb-1">
-              <input name="bookingConfigurationId" type="radio" class="radio-group__input" id="configOpen" value="2" v-bind="bookingConfigurationIdAttrs" v-model="bookingConfigurationId" />
-              <label for="configOpen" class="radio-group__label">
-                <span class="radio-group__label__button"></span>
-                <div class="radio-group__label__text">
-                  <div class="radio-group__label__text__title">Open Itineraries</div>
-                </div>
-              </label>
-            </div>
-
-            <div class="radio-group me-2 mb-1">
-              <input name="bookingConfigurationId" type="radio" class="radio-group__input" id="configNightly" value="3" v-bind="bookingConfigurationIdAttrs" v-model="bookingConfigurationId" />
-              <label for="configNightly" class="radio-group__label">
-                <span class="radio-group__label__button"></span>
-                <div class="radio-group__label__text">
-                  <div class="radio-group__label__text__title">Nightly</div>
-                </div>
-              </label>
-            </div>
-          </div>
+        
         </form>
       </div>
       <!-- FIX: Disabled save changes until form dirty / valid -->

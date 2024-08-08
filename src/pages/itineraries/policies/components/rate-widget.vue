@@ -33,7 +33,7 @@ const submitCreateRate = async () => {
 
   };
   if (await policiesStore.createRate(newRate)) {
-    await policiesStore.getItineraryPolicies(props.itineraryId);
+    await policiesStore.getItineraryProducts(props.itineraryId);
   }
   creatingRate.value = false;
 };

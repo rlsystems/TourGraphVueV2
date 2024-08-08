@@ -26,10 +26,7 @@ export const useItinerariesStore = defineStore("itineraries", {
       const response = await agent.get(`/itineraries?supplierId=${id}`);
       this.supplierItinerariesList = response.data;
     },
-    // async getProductItineraries(id) {
-    //   const response = await agent.get(`/itineraries?productId=${id}`);
-    //   this.productItinerariesList = response.data;
-    // },
+
 
     async runAutomation(id) {
       try {
@@ -178,6 +175,37 @@ export const useItinerariesStore = defineStore("itineraries", {
         const response = await agent.delete(`/seasons/${id}`);
         if (response.succeeded) {
           toast.success("Season deleted");
+          return true;
+        } else {
+          toast.error(response.messages[0]);
+          return false;
+        }
+      } catch (error) {
+        toast.error(error);
+        return false;
+      }
+    },
+    //Itinerary Product
+    async createItineraryProduct(data) {
+      try {
+        const response = await agent.post("/itineraries/itinerary-product", data);
+        if (response.succeeded) {
+          toast.success("Product added to itinerary");
+          return true;
+        } else {
+          toast.error(response.messages[0]);
+          return false;
+        }
+      } catch (error) {
+        toast.error(error);
+        return false;
+      }
+    },
+    async deleteItineraryProduct(id) {
+      try {
+        const response = await agent.delete(`/itineraries/itinerary-product/${id}`);
+        if (response.succeeded) {
+          toast.success("Product removed from itinerary");
           return true;
         } else {
           toast.error(response.messages[0]);

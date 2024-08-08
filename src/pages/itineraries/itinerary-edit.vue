@@ -28,7 +28,6 @@ const itineraryTitle = computed(() => {
 // initialize
 onMounted(async () => {
   await itinerariesStore.getItinerary(props.itineraryId);
-  console.log(itinerariesStore.itinerary);
   initialLoad.value = false;
 });
 

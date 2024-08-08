@@ -36,7 +36,7 @@ const submitCreateSeasonRange = async (data) => {
   };
   savingRange.value = true;
   if (await policiesStore.createSeasonRange(rangeObject)) {
-    await policiesStore.getItineraryPolicies(props.itineraryId);
+    await policiesStore.getItineraryProducts(props.itineraryId);
     showRangeModal.value = false; // modal must be closed after updating the table
   }
   savingRange.value = false;
@@ -49,7 +49,7 @@ const submitUpdatePolicy = async (data) => {
   let updatedPolicy = { ...props.policy, ...data };
   updatingPolicy.value = true;
   if (await policiesStore.updatePolicy(updatedPolicy)) {
-    await policiesStore.getItineraryPolicies(props.itineraryId);
+    await policiesStore.getItineraryProducts(props.itineraryId);
     showPolicyModal.value = false; 
   }
   updatingPolicy.value = false;
