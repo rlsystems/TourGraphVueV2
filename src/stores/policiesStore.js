@@ -46,6 +46,21 @@ export const usePoliciesStore = defineStore("policies", {
         return false;
       }
     },
+    async setDefaultPolicy(data) {
+      try {
+        const response = await agent.post(`/policies/setDefault/${data.id}`);
+        if (response.succeeded) {
+          toast.success("Set default policy");
+          return response.data;
+        } else {
+          toast.error(response.messages[0]);
+          return false;
+        }
+      } catch (error) {
+        toast.error(error);
+        return false;
+      }
+    },
     async deletePolicy(id) {
       try {
         const response = await agent.delete(`/policies/${id}`);

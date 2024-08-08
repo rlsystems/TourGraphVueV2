@@ -89,8 +89,8 @@ const submitDeletePolicy = async (id) => {
   <div v-if="!loading">
     <div v-if="policiesStore.itineraryProducts">
       <div v-for="itineraryProduct in policiesStore.itineraryProducts">
-        <div v-for="policy in itineraryProduct.policies">
-          <PolicyPanel v-if="policy.id == selectedPolicyId" :policy="policy" :key="policy.id" :itineraryId="props.itineraryId" @tabChange="seasonChange" @deletePolicy="submitDeletePolicy" :deletingPolicy="deletingPolicy" :selectedSeasonId="selectedSeasonId" />
+        <div v-for="(policy, index) in itineraryProduct.policies">
+          <PolicyPanel v-if="policy.id == selectedPolicyId" :showDefaultUpdate="policy.current && index != 0" :policy="policy" :key="policy.id" :itineraryId="props.itineraryId" @tabChange="seasonChange" @deletePolicy="submitDeletePolicy" :deletingPolicy="deletingPolicy" :selectedSeasonId="selectedSeasonId" />
         </div>
       </div>
     </div>

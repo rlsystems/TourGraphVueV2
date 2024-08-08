@@ -2,6 +2,7 @@
 import RateWidget from "./rate-widget.vue";
 import SeasonRangeModal from "./season-range-modal.vue";
 import PolicyModal from "./policy-modal.vue";
+import LoadingButton from "@/components/loading-button.vue";
 
 import { ref } from "vue";
 
@@ -9,7 +10,7 @@ import { usePoliciesStore } from "@/stores/policiesStore";
 import SeasonRangeWidget from "./season-range-widget.vue";
 const policiesStore = usePoliciesStore();
 
-const props = defineProps(["policy", "itineraryId", "selectedSeasonId", "deletingPolicy"]);
+const props = defineProps(["policy", "itineraryId", "selectedSeasonId", "deletingPolicy", "showDefaultUpdate"]);
 const emit = defineEmits(["tabChange", "deletePolicy"]);
 
 const showRangeModal = ref(false);
@@ -20,11 +21,11 @@ const updatingPolicy = ref(false);
 
 const changeSeason = (data) => {
   emit("tabChange", data);
-}
+};
 
 const deletePolicy = () => {
   emit("deletePolicy", props.policy.id);
-}
+};
 
 // create season range
 const submitCreateSeasonRange = async (data) => {
@@ -42,29 +43,42 @@ const submitCreateSeasonRange = async (data) => {
   savingRange.value = false;
 };
 
-
-
 // update policy
 const submitUpdatePolicy = async (data) => {
   let updatedPolicy = { ...props.policy, ...data };
   updatingPolicy.value = true;
   if (await policiesStore.updatePolicy(updatedPolicy)) {
     await policiesStore.getItineraryProducts(props.itineraryId);
-    showPolicyModal.value = false; 
+    showPolicyModal.value = false;
   }
   updatingPolicy.value = false;
 };
 
+// set default policy
+const submitSetDefaultPolicy = async () => {
+  console.log(props.policy.id)
+  updatingPolicy.value = true;
+  if (await policiesStore.setDefaultPolicy(props.policy)) {
+    await policiesStore.getItineraryProducts(props.itineraryId);
+    showPolicyModal.value = false;
+  }
+  updatingPolicy.value = false;
 
+};
 
 </script>
 
 <template>
   <div class="card">
     <div class="card-body">
+      <div v-if="showDefaultUpdate" class="d-flex mb-1 justify-content-end">
+        <!-- <b-button variant="danger" @click="submitSetDefaultPolicy">Make Default</b-button> -->
+        <LoadingButton variant="danger" type="submit" :loading="updatingPolicy" @click="submitSetDefaultPolicy" :disabled="updatingPolicy">Make Default</LoadingButton>
+
+      </div>
       <!-- Tabs -->
       <b-tabs>
-        <b-tab :title="season.name + ' Season'" :id="season.name" v-for="season in props.policy.seasons" :key="season.id" @click="changeSeason(season.id)" :active="season.id == props.selectedSeasonId" >
+        <b-tab :title="season.name + ' Season'" :id="season.name" v-for="season in props.policy.seasons" :key="season.id" @click="changeSeason(season.id)" :active="season.id == props.selectedSeasonId">
           <div class="seasons">
             <div class="seasons__ranges" v-if="season.id != '00000000-0000-0000-0000-000000000000'">
               <div class="seasons__ranges__title text-dark">Season Range:</div>
