@@ -1,5 +1,6 @@
 <script setup>
 import LoadingButton from "@/components/loading-button.vue";
+import ConfirmModal from "@/components/confirm-modal.vue";
 
 import SeasonsWidget from "./components/seasons-widget.vue";
 import ItineraryProductsWidget from "./components/itinerary-products-widget.vue";
@@ -14,15 +15,18 @@ const router = useRouter();
 import { useItinerariesStore } from "@/stores/itinerariesStore";
 const itinerariesStore = useItinerariesStore();
 
+import { useAccountStore } from "@/stores/_core/accountStore";
+const accountStore = useAccountStore();
+
 // refs
 const props = defineProps(["itineraryId"]);
 const updating = ref(false);
 const deleting = ref(false);
+const showDeleteConfirmModal = ref(false);
 
 const seasons = ref(itinerariesStore.itinerary?.seasons);
 const itineraryProducts = ref(itinerariesStore.itinerary?.itineraryProducts);
 const productOptions = ref(itinerariesStore.itinerary?.productOptions);
-
 
 // initial values
 const initialValues = ref({
@@ -64,16 +68,20 @@ const submitUpdate = handleSubmit(async (values) => {
 });
 
 const parentLink = computed(() => {
-  return { name: "product-itineraries", params: { productId: itinerariesStore.itinerary.productId } };
+  return { name: "supplier-itineraries", params: { supplierId: itinerariesStore.itinerary.supplierId } };
 });
 
 const submitDelete = handleSubmit(async () => {
   deleting.value = true;
   if (await itinerariesStore.deleteItinerary(itinerariesStore.itinerary.id)) {
     router.push(parentLink.value);
+
   }
   deleting.value = false;
+  showDeleteConfirmModal.value = false;
+
 });
+
 
 // watcher
 watch(
@@ -90,7 +98,6 @@ watch(
     seasons.value = itinerariesStore.itinerary.seasons;
     itineraryProducts.value = itinerariesStore.itinerary.itineraryProducts;
     productOptions.value = itinerariesStore.itinerary.productOptions;
-
   }
 );
 </script>
@@ -120,9 +127,10 @@ watch(
               </b-form-group>
             </form>
           </div>
-          <div class="d-flex flex-row-reverse mt-4">
+          <div v-if="!accountStore.userBasic" class="d-flex flex-row-reverse mt-4">
             <LoadingButton variant="primary" type="submit" class="ms-2" :loading="updating" @click="submitUpdate" :disabled="!canProceed">Save Changes</LoadingButton>
-            <LoadingButton variant="danger" type="submit" :loading="deleting" @click="submitDelete" :disabled="updating">Delete</LoadingButton>
+            <LoadingButton variant="danger" type="submit"  @click="showDeleteConfirmModal = true" :loading="deleting" :disabled="updating">Delete</LoadingButton>
+            <ConfirmModal :show="showDeleteConfirmModal" :loading="deleting" @confirm="submitDelete" @close="showDeleteConfirmModal = false" title="Delete Itinerary?" message="If you delete this itinerary all price and departures will be removed."></ConfirmModal>
           </div>
         </div>
       </div>
@@ -136,7 +144,6 @@ watch(
 </template>
 
 <style lang="scss" scoped>
-
 .name-row {
   display: grid;
   grid-template-columns: 1fr 200px;
@@ -146,6 +153,4 @@ watch(
     grid-template-columns: 1fr;
   }
 }
-
-
 </style>

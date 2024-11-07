@@ -6,7 +6,7 @@ import { ref, computed } from "vue";
 import { usePromotionsStore } from "@/stores/promotionsStore";
 const promotionsStore = usePromotionsStore();
 
-const props = defineProps(["promotion", "supplierId"]);
+const props = defineProps(["promotion", "supplierId", "hideEdit"]);
 
 const show = ref(false);
 const updating = ref(false);
@@ -55,7 +55,7 @@ const externalIdClass = computed(() => {
         <strong class="text-dark">{{ props.promotion.name }}</strong>
       </div>
       <div class="button-area">
-        <b-button variant="soft-primary" pill class="float-end" @click="show = true">Edit</b-button>
+        <b-button v-if="!props.hideEdit" variant="soft-primary" pill class="float-end" @click="show = true">Edit</b-button>
       </div>
     </template>
     <template v-slot:bottom>

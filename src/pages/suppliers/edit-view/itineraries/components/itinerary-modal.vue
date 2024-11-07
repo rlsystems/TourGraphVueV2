@@ -35,13 +35,12 @@ const initialValues = ref({
   name: props.data?.name || "",
   lengthInNights: props.data?.lengthInNights || 1,
   wpId: props.data?.wpId || "",
-
 });
 
 // schema
 const schema = yup.object({
   name: yup.string().required(),
-  lengthInNights: yup.number().required().min(1, 'Must be greater than 0'),
+  lengthInNights: yup.number().required().min(1, "Must be greater than 0"),
 });
 
 // veevalidate form object
@@ -54,6 +53,7 @@ const { handleSubmit, defineField, errors, meta } = useForm({
 const [name, nameAttrs] = defineField("name");
 const [lengthInNights, lengthInNightsAttrs] = defineField("lengthInNights");
 const [wpId, wpIdAttrs] = defineField("wpId");
+const [externalIdentifier, externalIdentifierAttrs] = defineField("externalIdentifier");
 
 const canProceed = computed(() => {
   return meta.value.dirty && meta.value.valid;
@@ -73,8 +73,6 @@ const proceed = handleSubmit((values) => {
 const proceedDelete = handleSubmit(() => {
   emit("proceedDelete", props.data.id);
 });
-
-
 </script>
 
 <template>
@@ -91,10 +89,16 @@ const proceedDelete = handleSubmit(() => {
             <b-form-invalid-feedback :state="false">{{ errors.lengthInNights }}</b-form-invalid-feedback>
           </b-form-group>
         </div>
-        <b-form-group label="Wordpress ID" label-for="wordpressId" class="mb-2" style="max-width: 150px">
+        <div class="grid2">
+          <b-form-group label="Wordpress ID" label-for="wordpressId" class="mb-2">
             <b-form-input type="text" v-bind="wpIdAttrs" v-model="wpId" id="wordpressId" />
             <b-form-invalid-feedback :state="false">{{ errors.wpId }}</b-form-invalid-feedback>
           </b-form-group>
+          <b-form-group label="External Identifier" label-for="externalIdentifier" class="mb-2">
+            <b-form-input type="text" v-bind="externalIdentifierAttrs" v-model="externalIdentifier" id="externalIdentifier" />
+            <b-form-invalid-feedback :state="false">{{ errors.externalIdentifier }}</b-form-invalid-feedback>
+          </b-form-group>
+        </div>
       </form>
     </div>
     <div class="modal-footer footer-controls border-top-0">
@@ -118,7 +122,17 @@ const proceedDelete = handleSubmit(() => {
   @media only screen and (max-width: 800px) {
     grid-template-columns: 1fr;
     gap: 0px;
+  }
+}
 
+.grid2 {
+  display: grid;
+  grid-template-columns: 150px 1fr 150px;
+  column-gap: 20px;
+
+  @media only screen and (max-width: 800px) {
+    grid-template-columns: 1fr;
+    gap: 0px;
   }
 }
 </style>

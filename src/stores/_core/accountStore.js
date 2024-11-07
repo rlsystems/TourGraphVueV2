@@ -11,7 +11,7 @@ export const useAccountStore = defineStore("account", {
   getters: {
     user: (state) => state.currentUser,
     userFullName: (state) => state.currentUser.firstName + " " + state.currentUser.lastName,
-
+    userBasic: (state) => state.currentUser.roleId === 'basic'
   },
   actions: {
     async getCurrentUser() {

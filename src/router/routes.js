@@ -2,7 +2,7 @@ const mainRoutes = [
   // products ---------------------------------------------------------------------------------------------------
   { 
     path: "/",
-    redirect: "/products",
+    redirect: "/suppliers",
     meta: { authRequired: true },
   },
   {

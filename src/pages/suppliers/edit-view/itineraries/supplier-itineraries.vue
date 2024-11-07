@@ -9,6 +9,9 @@ import ClientTable from "@/components/tables/client-table.vue";
 import { useItinerariesStore } from "@/stores/itinerariesStore";
 const itinerariesStore = useItinerariesStore();
 
+import { useAccountStore } from "@/stores/_core/accountStore";
+const accountStore = useAccountStore();
+
 const loading = ref(true);
 const props = defineProps(["supplierId"]);
 
@@ -37,19 +40,17 @@ const submitCreate = async (data) => {
   <b-row>
     <b-col class="d-flex justify-content-between align-items-center mb-3">
       <CountLabel title="Itineraries" titleSingle="Itinerary" :count="itinerariesStore.supplierItineraries?.length" :loading="loading"></CountLabel>
-      <b-button variant="primary" @click="showItineraryModal = true">New Itinerary</b-button>
+      <b-button variant="primary" @click="showItineraryModal = true" :disabled="accountStore.userBasic">New Itinerary</b-button>
     </b-col>
   </b-row>
 
-
-
-    <!-- Main Row  -->
-    <b-row>
-      <b-col>
-        <!-- Table -->
-        <ClientTable :data="itinerariesStore.supplierItineraries" :columns="columns" :loading="loading" filterPlaceholder="Search Itineraries..."></ClientTable>
-      </b-col>
-    </b-row>
+  <!-- Main Row  -->
+  <b-row>
+    <b-col>
+      <!-- Table -->
+      <ClientTable :data="itinerariesStore.supplierItineraries" :columns="columns" :loading="loading" filterPlaceholder="Search Itineraries..."></ClientTable>
+    </b-col>
+  </b-row>
 
   <!-- Modal -->
   <ItineraryModal v-if="showItineraryModal" title="Add New Itinerary" :saving="submitting" @proceed="submitCreate" @cancel="showItineraryModal = false" />

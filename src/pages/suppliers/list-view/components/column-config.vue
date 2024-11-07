@@ -25,7 +25,7 @@ export const columns = [
       h(CountDisplay, {
         title: "Products",
         titleSingle: "Product",
-        count: row.original.products.length,
+        count: row.original.products,
         link: `/suppliers/${row.original.id}/products`, 
       }),
   }),
@@ -37,7 +37,7 @@ export const columns = [
       h(CountDisplay, {
         title: "Itineraries",
         titleSingle: "Itinerary",
-        count: row.original.itineraries.length,
+        count: row.original.itineraries,
         link: `/suppliers/${row.original.id}/itineraries`, 
       }),
   }),
@@ -49,7 +49,7 @@ export const columns = [
       h(CountDisplay, {
         title: "Promotions",
         titleSingle: "Promotion",
-        count: row.original.promotions.length,
+        count: row.original.promotions,
         link: `/suppliers/${row.original.id}/promotions`
       }),
   }),

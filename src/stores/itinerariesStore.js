@@ -15,7 +15,6 @@ export const useItinerariesStore = defineStore("itineraries", {
     supplierItineraries: (state) => state.supplierItinerariesList,
     itinerary: (state) => state.currentItinerary,
     appSettings: (state) => state.currentAppSettings,
-
   },
   actions: {
     async getItinerary(id) {
@@ -26,7 +25,6 @@ export const useItinerariesStore = defineStore("itineraries", {
       const response = await agent.get(`/itineraries?supplierId=${id}`);
       this.supplierItinerariesList = response.data;
     },
-
 
     async runAutomation(id) {
       try {
@@ -55,7 +53,8 @@ export const useItinerariesStore = defineStore("itineraries", {
         updatedItinerary["runSucceeded"] = false;
         this.currentItinerary = updatedItinerary;
 
-        toast.error(error);
+        toast.error(error.message);
+
         return false;
       }
     },
@@ -75,7 +74,8 @@ export const useItinerariesStore = defineStore("itineraries", {
           return false;
         }
       } catch (error) {
-        toast.error(error);
+        toast.error(error.message);
+
         return false;
       }
     },
@@ -90,7 +90,8 @@ export const useItinerariesStore = defineStore("itineraries", {
           return false;
         }
       } catch (error) {
-        toast.error(error);
+        toast.error(error.message);
+
         return false;
       }
     },
@@ -105,7 +106,8 @@ export const useItinerariesStore = defineStore("itineraries", {
           return false;
         }
       } catch (error) {
-        toast.error(error);
+        toast.error(error.message);
+
         return false;
       }
     },
@@ -120,7 +122,8 @@ export const useItinerariesStore = defineStore("itineraries", {
           return false;
         }
       } catch (error) {
-        toast.error(error);
+        toast.error(error.message);
+
         return false;
       }
     },
@@ -135,7 +138,7 @@ export const useItinerariesStore = defineStore("itineraries", {
           return false;
         }
       } catch (error) {
-        toast.error(error);
+        toast.error(error.message);
         return false;
       }
     },
@@ -151,7 +154,8 @@ export const useItinerariesStore = defineStore("itineraries", {
           return false;
         }
       } catch (error) {
-        toast.error(error);
+        toast.error(error.message);
+
         return false;
       }
     },
@@ -166,7 +170,8 @@ export const useItinerariesStore = defineStore("itineraries", {
           return false;
         }
       } catch (error) {
-        toast.error(error);
+        toast.error(error.message);
+
         return false;
       }
     },
@@ -181,7 +186,8 @@ export const useItinerariesStore = defineStore("itineraries", {
           return false;
         }
       } catch (error) {
-        toast.error(error);
+        toast.error(error.message);
+
         return false;
       }
     },
@@ -197,7 +203,8 @@ export const useItinerariesStore = defineStore("itineraries", {
           return false;
         }
       } catch (error) {
-        toast.error(error);
+        toast.error(error.message);
+
         return false;
       }
     },
@@ -212,7 +219,8 @@ export const useItinerariesStore = defineStore("itineraries", {
           return false;
         }
       } catch (error) {
-        toast.error(error);
+        toast.error(error.message);
+
         return false;
       }
     },
@@ -233,7 +241,8 @@ export const useItinerariesStore = defineStore("itineraries", {
           return false;
         }
       } catch (error) {
-        toast.error(error);
+        toast.error(error.message);
+
         return false;
       }
     },
@@ -248,7 +257,8 @@ export const useItinerariesStore = defineStore("itineraries", {
           return false;
         }
       } catch (error) {
-        toast.error(error);
+        toast.error(error.message);
+
         return false;
       }
     },
@@ -263,7 +273,8 @@ export const useItinerariesStore = defineStore("itineraries", {
           return false;
         }
       } catch (error) {
-        toast.error(error);
+        toast.error(error.message);
+
         return false;
       }
     },
@@ -278,7 +289,8 @@ export const useItinerariesStore = defineStore("itineraries", {
           return false;
         }
       } catch (error) {
-        toast.error(error);
+        toast.error(error.message);
+
         return false;
       }
     },
@@ -293,7 +305,8 @@ export const useItinerariesStore = defineStore("itineraries", {
           return false;
         }
       } catch (error) {
-        toast.error(error);
+        toast.error(error.message);
+
         return false;
       }
     },

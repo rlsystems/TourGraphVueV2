@@ -12,6 +12,9 @@ const layoutStore = useLayoutStore();
 import { useSuppliersStore } from "@/stores/suppliersStore";
 const suppliersStore = useSuppliersStore();
 
+import { useAccountStore } from "@/stores/_core/accountStore";
+const accountStore = useAccountStore();
+
 const showAddModal = ref(false);
 const submitting = ref(false);
 const initialLoad = ref(true);
@@ -65,7 +68,7 @@ const handleSearch = async (data) => {
     <!-- Top Row -->
     <b-row>
       <b-col class="d-flex flex-row-reverse mb-3">
-        <b-button variant="primary" @click="showAddModal = true">New Supplier</b-button>
+        <b-button variant="primary" @click="showAddModal = true" :disabled="accountStore.user.roleId == 'basic'">New Supplier</b-button>
       </b-col>
     </b-row>
 

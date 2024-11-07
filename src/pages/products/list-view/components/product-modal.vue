@@ -60,6 +60,8 @@ const { handleSubmit, defineField, errors, meta } = useForm({
 // fields
 const [name, nameAttrs] = defineField("name");
 const [supplierId, supplierIdAttrs] = defineField("supplierId");
+const [externalIdentifier, externalIdentifierAttrs] = defineField("externalIdentifier");
+const [wpId, wpIdAttrs] = defineField("wpId");
 
 const canProceed = computed(() => {
   return meta.value.dirty && meta.value.valid;
@@ -100,19 +102,26 @@ onMounted(async () => {
 </script>
 
 <template>
-  <b-modal v-model="show" :title="title" title-class="h4" size="lg" hide-footer @cancel="close" @close="close" @hidden="close">
+  <b-modal v-model="show" :title="title" title-class="h4"  hide-footer @cancel="close" @close="close" @hidden="close">
     <div class="">
-      <form @submit="proceed" class="my-2">
-        <b-form-group label="Name" label-for="name" class="mb-2" style="max-width: 400px">
+      <form @submit="proceed" class="mb-2">
+        <b-form-group label="Name" label-for="name" class="mb-2" >
           <b-form-input type="text" v-bind="nameAttrs" v-model="name" id="name" />
           <b-form-invalid-feedback :state="false">{{ errors.name }}</b-form-invalid-feedback>
         </b-form-group>
+        <div   class="mb-2">
+          <LoadingSelect v-if="!props.supplierId" v-bind="supplierIdAttrs" v-model="supplierId" :options="selectSupplierOptions" :loading="loadingSuppliers" label="Supplier" id="supplierSelect"/>
+          <b-form-invalid-feedback :state="false">{{ errors.supplierId }}</b-form-invalid-feedback>
+        </div>
 
-        <LoadingSelect v-if="!props.supplierId" v-bind="supplierIdAttrs" v-model="supplierId" :options="selectSupplierOptions" :loading="loadingSuppliers" label="Supplier" id="supplierSelect" style="max-width: 400px" />
-        <b-form-invalid-feedback :state="false">{{ errors.supplierId }}</b-form-invalid-feedback>
-
-
-
+        <b-form-group label="External Identifier" label-for="externalIdentifier" class="mb-2" >
+          <b-form-input type="text" v-bind="externalIdentifierAttrs" v-model="externalIdentifier" id="externalIdentifier" />
+          <b-form-invalid-feedback :state="false">{{ errors.externalIdentifier }}</b-form-invalid-feedback>
+        </b-form-group>
+        <b-form-group label="Wordpress Id" label-for="wpId" class="mb-2" >
+          <b-form-input type="text" v-bind="wpIdAttrs" v-model="wpId" id="wpId" />
+          <b-form-invalid-feedback :state="false">{{ errors.wpId }}</b-form-invalid-feedback>
+        </b-form-group>
       </form>
     </div>
     <div class="modal-footer footer-controls border-top-0">

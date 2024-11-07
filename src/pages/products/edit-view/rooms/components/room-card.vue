@@ -9,7 +9,7 @@ import { ref } from "vue";
 import { useRoomsStore } from "@/stores/roomsStore";
 const roomsStore = useRoomsStore();
 
-const props = defineProps(["room", "productId"]);
+const props = defineProps(["room", "productId", "hideEdit"]);
 
 const show = ref(false);
 const updating = ref(false);
@@ -48,7 +48,7 @@ const submitDelete = async (id) => {
         </div>
       </div>
       <div class="button-area">
-        <b-button variant="soft-primary" pill class="float-end" @click="show = true">Edit</b-button>
+        <b-button v-if="!props.hideEdit" variant="soft-primary" pill class="float-end" @click="show = true">Edit</b-button>
       </div>
     </template>
 

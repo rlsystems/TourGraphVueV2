@@ -13,7 +13,7 @@ const badgeClass = computed(() => {
     case "admin":
       return "bg-success";
     case "editor":
-      return "bg-info";
+      return "bg-info-purple";
     case "basic":
       return "bg-info";
   }

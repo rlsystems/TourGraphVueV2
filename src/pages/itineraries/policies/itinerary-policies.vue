@@ -78,7 +78,7 @@ const submitDeletePolicy = async (id) => {
   <div class="policy-header mb-3">
     <div class="policy-header__options">
       <div v-for="itineraryProduct in policiesStore.itineraryProducts">
-        <b-button v-if="itineraryProduct.id == selectedItineraryProductId" pill :variant="policy.id == selectedPolicyId ? 'success' : 'outline-light'" v-for="policy in itineraryProduct.policies" @click="selectedPolicyId = policy.id">{{ policy.current ? "Current Policy" : policy.startDate }}</b-button>
+        <b-button v-if="itineraryProduct.id == selectedItineraryProductId"  :variant="policy.id == selectedPolicyId ? 'soft-success' : 'soft-outline-success'" v-for="policy in itineraryProduct.policies" @click="selectedPolicyId = policy.id">{{ policy.current ? "Current Policy" : policy.startDate }}</b-button>
       </div>
     </div>
     <div class="policy-header__cta">

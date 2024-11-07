@@ -31,6 +31,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  allowDefault: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 // initial values
@@ -38,6 +42,7 @@ const initialValues = ref({
   name: props.data?.name || "",
   wpId: props.data?.wpId || "",
   externalIdentifier: props.data?.externalIdentifier || "",
+  isDefault: props.data?.isDefault || false,
 });
 
 // schema
@@ -55,6 +60,7 @@ const { handleSubmit, defineField, errors, meta } = useForm({
 const [name, nameAttrs] = defineField("name");
 const [wpId, wpIdAttrs] = defineField("wpId");
 const [externalIdentifier, externalIdentifierAttrs] = defineField("externalIdentifier");
+const [isDefault, isDefaultAttrs] = defineField("isDefault");
 
 const canProceed = computed(() => {
   return meta.value.dirty && meta.value.valid;
@@ -76,6 +82,14 @@ const proceedDelete = handleSubmit(() => {
   emit("proceedDelete", props.data.id);
 });
 
+const onIsDefaultChange = (value) => {
+  if (value == true) {
+    name.value = "Default";
+    wpId.value = "";
+    externalIdentifier.value = "Default";
+  } 
+};
+
 
 </script>
 
@@ -85,18 +99,21 @@ const proceedDelete = handleSubmit(() => {
       <form @submit="proceed" class="my-2">
         <div class="name-row">
           <b-form-group label="Name" label-for="name" class="mb-2" style="max-width: 400px">
-            <b-form-input type="text" v-bind="nameAttrs" v-model="name" id="name" />
+            <b-form-input type="text" v-bind="nameAttrs" v-model="name" id="name" :disabled="isDefault"/>
             <b-form-invalid-feedback :state="false">{{ errors.name }}</b-form-invalid-feedback>
           </b-form-group>
-        </div>    
+          <div class="mb-3" v-if="allowDefault">
+            <b-form-checkbox v-bind="isDefaultAttrs" v-model="isDefault" switch @update:modelValue="onIsDefaultChange">Is Default</b-form-checkbox>
+          </div>
+        </div>
         <div class="form-block-title mt-4">Identifiers</div>
-        <div class="id-row ">
+        <div class="id-row">
           <b-form-group label="WordPress Id" label-for="wpId" style="max-width: 150px">
-            <b-form-input type="text" v-bind="wpIdAttrs" v-model="wpId" id="wpId" />
+            <b-form-input type="text" v-bind="wpIdAttrs" v-model="wpId" id="wpId"  />
             <b-form-invalid-feedback :state="false">{{ errors.wpId }}</b-form-invalid-feedback>
           </b-form-group>
-          <b-form-group label="External Identifier" label-for="externalIdentifier"  style="max-width: 150px">
-            <b-form-input type="text" v-bind="externalIdentifierAttrs" v-model="externalIdentifier" id="externalIdentifier" />
+          <b-form-group v-if="!isDefault" label="External Identifier" label-for="externalIdentifier" style="max-width: 150px">
+            <b-form-input type="text" v-bind="externalIdentifierAttrs" v-model="externalIdentifier" id="externalIdentifier" :disabled="isDefault" />
             <b-form-invalid-feedback :state="false">{{ errors.externalIdentifier }}</b-form-invalid-feedback>
           </b-form-group>
         </div>
@@ -119,18 +136,16 @@ const proceedDelete = handleSubmit(() => {
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 2rem;
-
+  align-items: end;
   @media only screen and (max-width: 800px) {
     grid-template-columns: 1fr;
     gap: 0px;
   }
 }
 
-
 .id-row {
   display: grid;
   grid-template-columns: max-content max-content;
   column-gap: 2rem;
-
 }
 </style>

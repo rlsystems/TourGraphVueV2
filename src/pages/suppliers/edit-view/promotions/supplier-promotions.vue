@@ -4,6 +4,8 @@ import PromotionModal from './components/promotion-modal.vue'
 import PromotionCard from './components/promotion-card.vue'
 import { computed, ref, onMounted, watch } from "vue";
 
+import { useAccountStore } from "@/stores/_core/accountStore";
+const accountStore = useAccountStore();
 
 import { usePromotionsStore } from "@/stores/promotionsStore";
 const promotionsStore = usePromotionsStore();
@@ -18,6 +20,9 @@ onMounted(async () => {
   loading.value = false;
 });
 
+const hasDefaultPromotion = computed(() => {
+  return promotionsStore.supplierPromotions.some(promotion => promotion.isDefault === true);
+});
 
 const submitCreate = async (data) => {
   data.supplierId = props.supplierId;
@@ -38,14 +43,14 @@ const submitCreate = async (data) => {
   <b-row>
     <b-col class="d-flex justify-content-between align-items-center mb-3">
       <CountLabel title="Promotions" titleSingle="Promotion" :count="promotionsStore.supplierPromotions?.length" :loading="loading"></CountLabel>
-      <b-button variant="primary" @click="showPromotionModal = true">New Promotion</b-button>
+      <b-button variant="primary" @click="showPromotionModal = true" :disabled="accountStore.userBasic">New Promotion</b-button>
     </b-col>
   </b-row>
 
   <!-- Main Content -->
   <div v-if="!loading">
     <div v-if="promotionsStore.supplierPromotions" class="grid-layout">
-      <PromotionCard :promotion="promotion" v-for="promotion in promotionsStore.supplierPromotions" :key="promotion.id" :supplierId="props.supplierId" />
+      <PromotionCard :promotion="promotion" v-for="promotion in promotionsStore.supplierPromotions" :key="promotion.id" :supplierId="props.supplierId" :hideEdit="accountStore.userBasic"/>
     </div>
     <p v-else class="text-center">No promotions found</p>
   </div>
@@ -54,7 +59,7 @@ const submitCreate = async (data) => {
   </div>
 
   <!-- Modal -->
-  <PromotionModal v-if="showPromotionModal" title="Add New Promotion" :saving="submitting" @proceed="submitCreate" @cancel="showPromotionModal = false" />
+  <PromotionModal v-if="showPromotionModal" title="Add New Promotion" :allowDefault="!hasDefaultPromotion" :saving="submitting" @proceed="submitCreate" @cancel="showPromotionModal = false" />
 
 </template>
 

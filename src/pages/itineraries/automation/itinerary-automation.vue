@@ -25,6 +25,8 @@ const initialValues = ref({
   productId: itinerariesStore.itinerary?.productId || null,
   enableAutomation: itinerariesStore.itinerary?.enableAutomation || false,
   externalIdentifier: itinerariesStore.itinerary?.externalIdentifier || "",
+  includeSimilar: itinerariesStore.itinerary?.includeSimilar || false,
+
   requireLengthIdentifier: itinerariesStore.itinerary?.requireLengthIdentifier || false,
   requirePortIdentifier: itinerariesStore.itinerary?.requirePortIdentifier || false,
   isDisembarkation: itinerariesStore.itinerary?.isDisembarkation || false,
@@ -61,6 +63,7 @@ const { handleSubmit, defineField, errors, meta, resetForm } = useForm({
 // fields
 const [enableAutomation, enableAutomationAttrs] = defineField("enableAutomation");
 const [externalIdentifier, externalIdentifierAttrs] = defineField("externalIdentifier");
+const [includeSimilar, includeSimilarAttrs] = defineField("includeSimilar");
 const [requireLengthIdentifier, requireLengthIdentifierAttrs] = defineField("requireLengthIdentifier");
 const [requirePortIdentifier, requirePortIdentifierAttrs] = defineField("requirePortIdentifier");
 const [isDisembarkation, isDisembarkationAttrs] = defineField("isDisembarkation");
@@ -95,6 +98,7 @@ watch(
         productId: itinerariesStore.itinerary.productId,
         enableAutomation: itinerariesStore.itinerary.enableAutomation,
         externalIdentifier: itinerariesStore.itinerary.externalIdentifier,
+        includeSimilar: itinerariesStore.itinerary.includeSimilar,
         requireLengthIdentifier: itinerariesStore.itinerary.requireLengthIdentifier,
         requirePortIdentifier: itinerariesStore.itinerary.requirePortIdentifier,
         isDisembarkation: itinerariesStore.itinerary.isDisembarkation,
@@ -125,6 +129,9 @@ watch(
                   <b-form-input type="text" v-bind="externalIdentifierAttrs" v-model="externalIdentifier" id="externalIdentifier" />
                   <b-form-invalid-feedback :state="false">{{ errors.externalIdentifier }}</b-form-invalid-feedback>
                 </b-form-group>
+                <div class="mb-3">
+                  <b-form-checkbox v-bind="includeSimilarAttrs" v-model="includeSimilar" switch>Include Similar</b-form-checkbox>
+                </div>
                 <div class="mb-3">
                   <b-form-checkbox v-bind="requireLengthIdentifierAttrs" v-model="requireLengthIdentifier" switch>Require Length Identifier</b-form-checkbox>
                 </div>

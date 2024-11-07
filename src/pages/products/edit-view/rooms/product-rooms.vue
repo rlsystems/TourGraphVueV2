@@ -7,9 +7,10 @@ import RoomCard from './components/room-card.vue'
 import { computed, ref, onMounted, watch } from "vue";
 
 import { useRoomsStore } from "@/stores/roomsStore";
-
-
 const roomsStore = useRoomsStore();
+
+import { useAccountStore } from "@/stores/_core/accountStore";
+const accountStore = useAccountStore();
 
 const loading = ref(true);
 const props = defineProps(["productId"]);
@@ -47,14 +48,14 @@ const submitCreate = async (data) => {
   <b-row>
     <b-col class="d-flex justify-content-between align-items-center mb-3">
       <CountLabel title="Room Types" titleSingle="Room Type" :count="roomsStore.productRooms?.length" :loading="loading"></CountLabel>
-      <b-button variant="primary" @click="showRoomModal = true">New Room</b-button>
+      <b-button variant="primary" @click="showRoomModal = true" :disabled="accountStore.userBasic">New Room</b-button>
     </b-col>
   </b-row>
 
   <!-- Main Content -->
   <div v-if="!loading">
     <div v-if="roomsStore.productRooms" class="grid-layout">
-      <RoomCard :room="room" v-for="room in roomsStore.productRooms" :key="room.id" :productId="props.productId" />
+      <RoomCard :room="room" v-for="room in roomsStore.productRooms" :key="room.id" :productId="props.productId" :hideEdit="accountStore.userBasic"/>
     </div>
     <p v-else class="text-center">No rooms found</p>
   </div>

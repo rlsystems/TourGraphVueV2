@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import SeasonModal from "./season-modal.vue";
+import ConfirmModal from "@/components/confirm-modal.vue";
 
 import { useItinerariesStore } from "@/stores/itinerariesStore";
 const itinerariesStore = useItinerariesStore();
@@ -8,6 +9,7 @@ const itinerariesStore = useItinerariesStore();
 const seasonToEdit = ref(null);
 const showEdit = ref(false);
 const showCreate = ref(false);
+const showDeleteConfirmModal = ref(false);
 
 const updating = ref(false);
 const deleting = ref(false);
@@ -45,13 +47,21 @@ const submitUpdate = async (data) => {
   updating.value = false;
 };
 
-const submitDelete = async (id) => {
+let selectedSeasonId = null;
+const confirmDelete = async (id) => {
+  showDeleteConfirmModal.value = true;
+  selectedSeasonId = id;
+};
+
+const submitDelete = async () => {
   deleting.value = true;
-  if (await itinerariesStore.deleteSeason(id)) {
+  if (await itinerariesStore.deleteSeason(selectedSeasonId)) {
     await itinerariesStore.getItinerary(props.itineraryId);
     showEdit.value = false;
   }
   deleting.value = false;
+  showDeleteConfirmModal.value = false;
+
 };
 </script>
 
@@ -64,7 +74,8 @@ const submitDelete = async (id) => {
           <div class="widget-grid__items__default">Regular</div>
           <div v-for="season in props.seasons">
             <b-button variant="light" @click="setEditSeason(season)">{{ season.name }} Season</b-button>
-            <SeasonModal v-if="showEdit" title="Edit Season" :season="seasonToEdit" :saving="updating" :deleting="deleting" @proceed="submitUpdate" @proceedDelete="submitDelete" :isCreate="false" @cancel="showEdit = false"></SeasonModal>
+            <SeasonModal v-if="showEdit" title="Edit Season" :season="seasonToEdit" :saving="updating" :deleting="deleting" @proceed="submitUpdate" @proceedDelete="confirmDelete" :isCreate="false" @cancel="showEdit = false"></SeasonModal>
+            <ConfirmModal :show="showDeleteConfirmModal" :loading="deleting" @confirm="submitDelete" @close="showDeleteConfirmModal = false" title="Delete Season?" message="This will remove all price policies for the season and set any departures to regular season"></ConfirmModal>
           </div>
         </div>
         <div class="widget-grid__control">

@@ -36,6 +36,9 @@ axios.interceptors.response.use(
       case 401:
         // 401 unauthorized is handled by axios-auth-refresh and refreshAuthLogic function
         break;
+      case 403:
+        toast.error("Not authorized");
+        break;
       case 500:
         toast.error("Error code 500: internal server error");
         console.log(data);
@@ -47,20 +50,18 @@ axios.interceptors.response.use(
 
 // Function that will be called to refresh authorization
 const refreshAuthLogic = (failedRequest) =>
-    agent.get("/tokens/" + useAuthStore().refreshToken).then((response) => {
-      if (!response.succeeded) {
-        useAuthStore().logout(); // if refresh token expired
-      } else {
-        useAuthStore().currentToken = response.data.token; // set new jwt auth token in local storage
-        failedRequest.response.config.headers["Authorization"] = "Bearer " + response.data.token; // set new jwt auth token in the retry attempt
-        return Promise.resolve();
-      }
-    });
-  
-  createAuthRefreshInterceptor(axios, refreshAuthLogic);
+  agent.get("/tokens/" + useAuthStore().refreshToken).then((response) => {
+    if (!response.succeeded) {
+      useAuthStore().logout(); // if refresh token expired
+    } else {
+      useAuthStore().currentToken = response.data.token; // set new jwt auth token in local storage
+      failedRequest.response.config.headers["Authorization"] = "Bearer " + response.data.token; // set new jwt auth token in the retry attempt
+      return Promise.resolve();
+    }
+  });
 
+createAuthRefreshInterceptor(axios, refreshAuthLogic);
 
-  
 // Axios Base
 const responseBody = (response) => response.data;
 const agent = {

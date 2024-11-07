@@ -15,6 +15,9 @@ const productsStore = useProductsStore();
 import {useSuppliersStore} from "@/stores/suppliersStore.js";
 const supplierStore = useSuppliersStore();
 
+import { useAccountStore } from "@/stores/_core/accountStore";
+const accountStore = useAccountStore();
+
 const showAddModal = ref(false);
 const initialLoad = ref(true);
 const submitting = ref(false);
@@ -68,7 +71,7 @@ const handleSearch = async (data) => {
     <!-- Top Row -->
     <b-row>
       <b-col class="d-flex flex-row-reverse mb-3">
-        <b-button variant="primary" @click="showAddModal = true">New Product</b-button>
+        <b-button variant="primary" @click="showAddModal = true" :disabled="accountStore.userBasic">New Product</b-button>
       </b-col>
     </b-row>
 

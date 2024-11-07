@@ -1,6 +1,6 @@
 <script setup>
 import LoadingButton from "@/components/loading-button.vue";
-import LoadingSelect from "@/components/loading-select.vue";
+import ConfirmModal from "@/components/confirm-modal.vue";
 
 import { computed, ref, onMounted, watch } from "vue";
 import { useForm } from "vee-validate";
@@ -12,12 +12,14 @@ const router = useRouter();
 import { useSuppliersStore } from "@/stores/suppliersStore";
 const suppliersStore = useSuppliersStore();
 
+import { useAccountStore } from "@/stores/_core/accountStore";
+const accountStore = useAccountStore();
 
 const emit = defineEmits(["proceed", "proceedDelete"]);
 
-const suppliersLoading = ref(false);
 const updating = ref(false);
 const deleting = ref(false);
+const showDeleteConfirmModal = ref(false);
 
 // initial values
 const initialValues = ref({
@@ -47,23 +49,24 @@ const canProceed = computed(() => {
 });
 
 // handle submit
-const proceed = handleSubmit(async (values) => {
+const submitUpdate = handleSubmit(async (values) => {
   let updatedSupplier = { ...suppliersStore.supplier, ...values }; // get the original row object and overwrite any updated fields with new values
   updating.value = true;
   if (await suppliersStore.updateSupplier(updatedSupplier)) {
 
     suppliersStore.currentSupplier = updatedSupplier; 
   }
-
   updating.value = false;
 });
 
-const proceedDelete = handleSubmit(async (values) => {
+const submitDelete = handleSubmit(async (values) => {
   deleting.value = true;
   if (await suppliersStore.deleteSupplier(suppliersStore.supplier.id)) {
     router.push("/suppliers");
   }
   deleting.value = false;
+  showDeleteConfirmModal.value = false;
+
 });
 
 // watcher
@@ -100,9 +103,11 @@ watch(
         </form>
       </div>
       <!-- Buttons -->
-      <div class="d-flex flex-row-reverse">
-        <LoadingButton variant="primary" type="submit" class="mx-2" :loading="updating" @click="proceed" :disabled="!canProceed">Save Changes</LoadingButton>
-        <LoadingButton variant="danger" type="submit" :loading="deleting" @click="proceedDelete" :disabled="updating">Delete</LoadingButton>
+      <div v-if="!accountStore.userBasic" class="d-flex flex-row-reverse">
+        <LoadingButton variant="primary" type="submit" class="mx-2" :loading="updating" @click="submitUpdate" :disabled="!canProceed">Save Changes</LoadingButton>
+        <LoadingButton variant="danger" type="submit" :loading="deleting" @click="showDeleteConfirmModal = true" :disabled="updating">Delete</LoadingButton>
+        <ConfirmModal :show="showDeleteConfirmModal" :loading="deleting" @confirm="submitDelete" @close="showDeleteConfirmModal = false" title="Delete Supplier?" message="This will completely eliminate all information related to this suppler."></ConfirmModal>
+
       </div>
     </div>
   </div>

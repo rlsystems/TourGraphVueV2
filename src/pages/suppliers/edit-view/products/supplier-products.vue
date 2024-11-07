@@ -8,8 +8,9 @@ import CountLabel from "@/components/count-label.vue";
 import { useProductsStore } from "@/stores/productsStore";
 const productsStore = useProductsStore();
 
-import { useSuppliersStore } from "@/stores/suppliersStore";
-const suppliersStore = useSuppliersStore();
+import { useAccountStore } from "@/stores/_core/accountStore";
+const accountStore = useAccountStore();
+
 
 const loading = ref(true);
 const props = defineProps(["supplierId"]);
@@ -42,7 +43,7 @@ const submitCreate = async (data) => {
   <b-row>
     <b-col class="d-flex justify-content-between align-items-center mb-3">
       <CountLabel title="Products" titleSingle="Product" :count="productsStore.productList?.length" :loading="loading"></CountLabel>
-      <b-button variant="primary" @click="showModal = true">New Product</b-button>
+      <b-button variant="primary" @click="showModal = true" :disabled="accountStore.userBasic">New Product</b-button>
     </b-col>
   </b-row>
 

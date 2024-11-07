@@ -32,6 +32,8 @@ onMounted(async () => {
         <strong class="text-dark">{{ props.product.name }}</strong>
         <small>{{ props.product.supplierName }}</small>
         <div class="mt-1">Wordpress Id:<IdBadge :display="props.product.wpId" class="m-1" :isLink="true"></IdBadge></div>
+        <div class="mt-1">External Id:<IdBadge :display="props.product.externalIdentifier" class="m-1" :isLink="true"></IdBadge></div>
+
       </div>
       <!-- Edit -->
       <router-link :to="editProductLink">
