@@ -1,8 +1,9 @@
 <script setup>
 import { computed, ref, onMounted, watch } from "vue";
-import ProductCard from "./components/product-card.vue";
+import { columns } from "@/pages/products/list-view/components/column-config.vue";
 import ProductModal from "@/pages/products/list-view/components/product-modal.vue";
 import CountLabel from "@/components/count-label.vue";
+import ClientTable from "@/components/tables/client-table.vue";
 
 
 import { useProductsStore } from "@/stores/productsStore";
@@ -20,6 +21,7 @@ const submitting = ref(false);
 
 onMounted(async () => {
   await productsStore.getSupplierProducts(props.supplierId);
+  console.log(productsStore.productList);
   loading.value = false;
 });
 
@@ -47,18 +49,13 @@ const submitCreate = async (data) => {
     </b-col>
   </b-row>
 
-  <!-- Spinner and no itinerary found check -->
-  <template v-if="!loading">
-    <!-- Grid -->
-    <div v-if="productsStore.productList" class="grid-layout">
-      <ProductCard :product="product" v-for="product in productsStore.productList" :key="product.id" />
-    </div>
-    <p v-else class="text-center">No itineraries found</p>
-  </template>
-  <div v-else class="d-flex justify-content-center">
-    <span class="spinner-border spinner-border-sm avatar-xs text-primary" role="status" aria-hidden="true"></span>
-  </div>
-
+  <!-- Main Row  -->
+  <b-row>
+    <b-col>
+      <!-- Table -->
+      <ClientTable :data="productsStore.productList" :columns="columns" :loading="loading" filterPlaceholder="Search Itineraries..."></ClientTable>
+    </b-col>
+  </b-row>
   <!-- Modal -->
   <ProductModal v-if="showModal" title="Add New Product" :supplierId="props.supplierId" :saving="submitting" @proceed="submitCreate" @cancel="showModal = false" />
 </template>

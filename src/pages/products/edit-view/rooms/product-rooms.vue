@@ -1,8 +1,9 @@
 <script setup>
-import CountLabel from '@/components/count-label.vue'
+import CountLabel from "@/components/count-label.vue";
+import ClientTable from "@/components/tables/client-table.vue";
+import { columns } from "./components/column-config.vue";
 
-import RoomModal from './components/room-modal.vue'
-import RoomCard from './components/room-card.vue'
+import RoomModal from "./components/room-modal.vue";
 
 import { computed, ref, onMounted, watch } from "vue";
 
@@ -24,8 +25,6 @@ onMounted(async () => {
   loading.value = false;
 });
 
-
-
 // modal submit
 const submitCreate = async (data) => {
   data.productId = props.productId;
@@ -33,17 +32,12 @@ const submitCreate = async (data) => {
   if (await roomsStore.createRoom(data)) {
     await roomsStore.getProductRooms(props.productId);
     showRoomModal.value = false;
-
   }
   submitting.value = false;
 };
-
-
-
 </script>
 
 <template>
-
   <!-- Top Row -->
   <b-row>
     <b-col class="d-flex justify-content-between align-items-center mb-3">
@@ -52,22 +46,17 @@ const submitCreate = async (data) => {
     </b-col>
   </b-row>
 
-  <!-- Main Content -->
-  <div v-if="!loading">
-    <div v-if="roomsStore.productRooms" class="grid-layout">
-      <RoomCard :room="room" v-for="room in roomsStore.productRooms" :key="room.id" :productId="props.productId" :hideEdit="accountStore.userBasic"/>
-    </div>
-    <p v-else class="text-center">No rooms found</p>
-  </div>
-  <div v-else class="d-flex justify-content-center">
-    <span class="spinner-border spinner-border-sm avatar-xs text-primary" role="status" aria-hidden="true"></span>
-  </div>
+  <!-- Main Row  -->
+  <b-row>
+    <b-col>
+      <!-- Table -->
+      <ClientTable :data="roomsStore.productRooms" :columns="columns" :loading="loading" filterPlaceholder="Search Itineraries..."></ClientTable>
+    </b-col>
+  </b-row>
 
   <!-- Modal -->
   <RoomModal v-if="showRoomModal" title="Add New Room" :saving="submitting" @proceed="submitCreate" @cancel="showRoomModal = false" />
-
 </template>
-
 
 <style scoped lang="scss">
 .grid-layout {
@@ -76,4 +65,3 @@ const submitCreate = async (data) => {
   flex-wrap: wrap;
 }
 </style>
-

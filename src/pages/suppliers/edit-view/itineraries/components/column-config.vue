@@ -51,15 +51,19 @@ export const columns = [
         hideAvatar: true,
       }),
   }),
-
   columnHelper.accessor("wpId", {
     label: "WpId",
     enableSorting: true,
-    cell: ({ row }) =>
-      h(IdBadge, {
+    cell: ({ row, table }) => {
+      const allData = table.getRowModel().rows.map((r) => r.original);
+      const currentWpId = row.original.wpId;
+      const isDuplicate = allData.filter((item) => item.wpId === currentWpId).length > 1;
+      return h(IdBadge, {
         display: row.original.wpId,
         isLink: true,
-      }),
+        warning: isDuplicate
+      });
+    },
   }),
   columnHelper.accessor("enableAutomation", {
     label: "Automation Status",

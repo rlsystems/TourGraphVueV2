@@ -3,6 +3,8 @@ import CountLabel from '@/components/count-label.vue'
 import PromotionModal from './components/promotion-modal.vue'
 import PromotionCard from './components/promotion-card.vue'
 import { computed, ref, onMounted, watch } from "vue";
+import ClientTable from "@/components/tables/client-table.vue";
+import { columns } from "./components/column-config.vue";
 
 import { useAccountStore } from "@/stores/_core/accountStore";
 const accountStore = useAccountStore();
@@ -18,6 +20,7 @@ const submitting = ref(false);
 onMounted(async () => {
   await promotionsStore.getSupplierPromotions(props.supplierId);
   loading.value = false;
+  console.log(promotionsStore.supplierPromotions)
 });
 
 const hasDefaultPromotion = computed(() => {
@@ -47,16 +50,14 @@ const submitCreate = async (data) => {
     </b-col>
   </b-row>
 
-  <!-- Main Content -->
-  <div v-if="!loading">
-    <div v-if="promotionsStore.supplierPromotions" class="grid-layout">
-      <PromotionCard :promotion="promotion" v-for="promotion in promotionsStore.supplierPromotions" :key="promotion.id" :supplierId="props.supplierId" :hideEdit="accountStore.userBasic"/>
-    </div>
-    <p v-else class="text-center">No promotions found</p>
-  </div>
-  <div v-else class="d-flex justify-content-center">
-    <span class="spinner-border spinner-border-sm avatar-xs text-primary" role="status" aria-hidden="true"></span>
-  </div>
+
+  <!-- Main Row  -->
+  <b-row>
+    <b-col>
+      <!-- Table -->
+      <ClientTable :data="promotionsStore.supplierPromotions" :columns="columns" :loading="loading" filterPlaceholder="Search Itineraries..."></ClientTable>
+    </b-col>
+  </b-row>
 
   <!-- Modal -->
   <PromotionModal v-if="showPromotionModal" title="Add New Promotion" :allowDefault="!hasDefaultPromotion" :saving="submitting" @proceed="submitCreate" @cancel="showPromotionModal = false" />

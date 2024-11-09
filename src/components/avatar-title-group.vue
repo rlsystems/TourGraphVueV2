@@ -7,6 +7,8 @@
     <div class="d-flex flex-column" :style="{ maxWidth: props.maxWidth }">
       <strong v-if="props.title">{{ props.title }}</strong>
       <small v-if="props.subtitle || props.subtitle == ''">{{ props.subtitle }}</small>
+      <small v-if="props.subtitle2 || props.subtitle2 == ''">{{ props.subtitle2 }}</small>
+
     </div>
     <slot></slot>
   </div>
@@ -15,7 +17,7 @@
 <script setup>
 import getInitials from "@/utils/getInitials.js";
 
-const props = defineProps(["title", "subtitle", "image", "hideAvatar", "maxWidth"]);
+const props = defineProps(["title", "subtitle", "subtitle2", "image", "hideAvatar", "maxWidth"]);
 </script>
 
 <style lang="scss" scoped>

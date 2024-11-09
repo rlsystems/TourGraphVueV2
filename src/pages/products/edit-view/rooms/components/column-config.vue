@@ -1,22 +1,26 @@
 <script>
+import { h, computed, getCurrentInstance } from "vue";
 import { createColumnHelper } from "@tanstack/vue-table";
-import EditProductButton from "./edit-product-button.vue";
-import { h } from "vue";
-import AvatarTitleGroup from "@/components/avatar-title-group.vue";
-import CountDisplay from "@/components/count-display.vue";
+import EditRoomButton from "./edit-room-button.vue";
+
 import IdBadge from "@/components/id-badge.vue";
+import AvatarTitleGroup from "@/components/avatar-title-group.vue";
 
 const columnHelper = createColumnHelper();
 export const columns = [
   columnHelper.accessor("name", {
     label: "Name",
     enableSorting: true,
-    cell: ({ row }) =>
-      h(AvatarTitleGroup, {
+    cell: ({ row }) => {
+      const instance = getCurrentInstance();
+      const filters = instance?.appContext.config.globalProperties.filters;
+      return h(AvatarTitleGroup, {
         title: row.original.name,
-        subtitle: row.original.supplierName,
+        subtitle: filters?.formatOccupancy(row.original.maxOccupancy) + " Occupancy", // Using the formatted value
+        subtitle2: filters.formatPlural(row.original.numberOfRooms, "Room", "Rooms"),
         hideAvatar: true,
-      }),
+      });
+    },
   }),
   columnHelper.accessor("wpId", {
     label: "WpId",
@@ -46,36 +50,12 @@ export const columns = [
       });
     },
   }),
-  columnHelper.display({
-    id: "rooms",
-    label: "Room Types",
-    enableSorting: false,
-    cell: ({ row }) =>
-      h(CountDisplay, {
-        title: "Rooms Types",
-        titleSingle: "Room Type",
-        count: row.original.rooms.length,
-        link: `/products/${row.original.id}/rooms`,
-      }),
-  }),
-  columnHelper.display({
-    id: "itineraries",
-    label: "Itineraries",
-    enableSorting: false,
-    cell: ({ row }) =>
-      h(CountDisplay, {
-        title: "Itineraries",
-        titleSingle: "Itinerary",
-        count: row.original.itineraryCount,
-        link: `/suppliers/${row.original.supplierId}/itineraries`,
-      }),
-  }),
   columnHelper.accessor("edit", {
     label: "",
     enableSorting: false,
     cell: ({ row }) =>
-      h(EditProductButton, {
-        targetProduct: row.original,
+      h(EditRoomButton, {
+        room: row.original,
       }),
   }),
 ];
